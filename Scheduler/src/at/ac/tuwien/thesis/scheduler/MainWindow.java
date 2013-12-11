@@ -17,8 +17,9 @@ import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
 import at.ac.tuwien.thesis.scheduler.controller.ChartController;
-import at.ac.tuwien.thesis.scheduler.controller.ControllerCallbackListener;
 import at.ac.tuwien.thesis.scheduler.controller.InputController;
+import at.ac.tuwien.thesis.scheduler.controller.listeners.ControllerCallbackListener;
+
 import javax.swing.JLabel;
 import javax.swing.JCheckBox;
 import javax.swing.JButton;

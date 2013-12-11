@@ -1,4 +1,4 @@
-package at.ac.tuwien.thesis.scheduler.controller;
+package at.ac.tuwien.thesis.scheduler.controller.listeners;
 
 import javax.swing.table.TableModel;
 

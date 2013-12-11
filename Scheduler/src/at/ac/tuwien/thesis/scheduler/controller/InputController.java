@@ -10,6 +10,7 @@ import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import at.ac.tuwien.thesis.scheduler.controller.listeners.ControllerCallbackListener;
 import at.ac.tuwien.thesis.scheduler.model.ListModel;
 import at.ac.tuwien.thesis.scheduler.model.TableModel;
 import at.ac.tuwien.thesis.scheduler.model.TimeSeriesModel;
