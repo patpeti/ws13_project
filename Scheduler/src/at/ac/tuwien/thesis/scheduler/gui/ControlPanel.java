@@ -15,7 +15,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import at.ac.tuwien.thesis.scheduler.controller.ForecastController;
-import at.ac.tuwien.thesis.scheduler.enums.Forecasts;
+import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 
 public class ControlPanel {
 	
@@ -69,18 +69,18 @@ public class ControlPanel {
 		
 		comboBox = new JComboBox();
 		panel_6.add(comboBox);
-		comboBox.setModel(new DefaultComboBoxModel(Forecasts.values()));
+		comboBox.setModel(new DefaultComboBoxModel(ForecastType.values()));
 		
 		comboBox1 = new JComboBox();
-		comboBox1.setModel(new DefaultComboBoxModel(Forecasts.values()));
+		comboBox1.setModel(new DefaultComboBoxModel(ForecastType.values()));
 		panel_6.add(comboBox1);
 		
 		comboBox2 = new JComboBox();
-		comboBox2.setModel(new DefaultComboBoxModel(Forecasts.values()));
+		comboBox2.setModel(new DefaultComboBoxModel(ForecastType.values()));
 		panel_6.add(comboBox2);
 		
 		comboBox3 = new JComboBox();
-		comboBox3.setModel(new DefaultComboBoxModel(Forecasts.values()));
+		comboBox3.setModel(new DefaultComboBoxModel(ForecastType.values()));
 		panel_6.add(comboBox3);
 
 

@@ -9,7 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
-import at.ac.tuwien.thesis.scheduler.enums.Forecasts;
+import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 import at.ac.tuwien.thesis.scheduler.gui.ControlPanel;
 import at.ac.tuwien.thesis.scheduler.model.TimeSeriesModel;
 
@@ -40,7 +40,7 @@ public class ForecastController implements ActionListener{
 		}else if(e.getSource() instanceof JComboBox){
 			JComboBox cb = (JComboBox) e.getSource();
 			if(view.isAllSameSelected()){
-				Forecasts selection = (Forecasts) cb.getSelectedItem();
+				ForecastType selection = (ForecastType) cb.getSelectedItem();
 				JComboBox cb1 = view.getComboBox();
 				JComboBox cb2 = view.getComboBox1();
 				JComboBox cb3 = view.getComboBox2();
@@ -63,10 +63,10 @@ public class ForecastController implements ActionListener{
 	private void ShowForecast() {
 		System.out.println("Show Forecast");
 		this.inputcontroller.getMainWindow().getForecastPanel().removeAll();
-		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("CPU",(Forecasts)view.getComboBox().getSelectedItem()));
-		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("NET",(Forecasts)view.getComboBox().getSelectedItem()));
-		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("MEM",(Forecasts)view.getComboBox().getSelectedItem()));
-		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("DISK",(Forecasts)view.getComboBox().getSelectedItem()));
+		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("CPU",(ForecastType)view.getComboBox().getSelectedItem()));
+		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("NET",(ForecastType)view.getComboBox().getSelectedItem()));
+		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("MEM",(ForecastType)view.getComboBox().getSelectedItem()));
+		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("DISK",(ForecastType)view.getComboBox().getSelectedItem()));
 		this.inputcontroller.getMainWindow().getFrame().validate();
 	}
 

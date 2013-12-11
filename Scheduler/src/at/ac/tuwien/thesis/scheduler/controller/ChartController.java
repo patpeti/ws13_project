@@ -20,8 +20,9 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 
-import at.ac.tuwien.thesis.scheduler.enums.Forecasts;
+import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 import at.ac.tuwien.thesis.scheduler.model.TimeSeriesHolder;
+import at.ac.tuwien.thesis.scheduler.utils.Forecaster;
 
 public class ChartController {
 	
@@ -55,6 +56,7 @@ public class ChartController {
 			renderer.setBaseShapesVisible(false);
 			renderer.setBaseShapesFilled(true);
 			renderer.setDrawSeriesLineAsPath(true);
+			
 		}
 
 		return chart;
@@ -92,8 +94,29 @@ public class ChartController {
 		return panel;
 	}
 	
-	public JPanel createForecast(String string, Forecasts forecasttype){
-		return this.createChart(string);
+	public JPanel createForecast(String dim, ForecastType forecastType){
+		JFreeChart chart = createChart(createForecastData(dim,forecastType),dim);
+		//TODO enable this
+//		chart.getXYPlot().getRenderer().setSeriesPaint(1, Color.BLUE);
+		ChartPanel panel = new ChartPanel(chart);
+		panel.setFillZoomRectangle(true);
+		panel.setMouseWheelEnabled(true);
+		return panel;
+	}
+
+	private XYDataset createForecastData(String dim, ForecastType forecastType) {
+		Forecaster f = new Forecaster();
+		List<Double> values = f.calculateForecast(tsHolder.getDimension(dim),forecastType);
+		XYSeries s1 = new XYSeries(dim);
+		int i = tsHolder.getDimension(dim).size();
+		for(Double value : values){
+			s1.add(i,value);
+			i++;
+		}
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		dataset.addSeries(s1);
+
+		return dataset;
 	}
 
 }
