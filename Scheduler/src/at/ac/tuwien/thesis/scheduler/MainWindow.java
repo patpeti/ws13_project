@@ -117,7 +117,7 @@ public class MainWindow implements ControllerCallbackListener {
 		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
 		
 		
-		ControlPanel cp = new ControlPanel(inputcontroller);
+		ControlPanel cp = new ControlPanel(inputcontroller.getSettingsController());
 		panel.add(cp.getControlPanel());
 		
 		panel.validate();

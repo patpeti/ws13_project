@@ -27,15 +27,12 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 	private TimeSeriesModel tsModel;
 	ControllerCallbackListener mainWin;
 	private ChartController chartcontroller;
-
-//	public InputController() {
-//		listmodel = new ListModel();
-//		tableModel = new TableModel();
-//	}
+	private SettingsController settingsController;
 
 	public InputController(ControllerCallbackListener mainWindow) {
 		listmodel = new ListModel();
 		tableModel = new TableModel();
+		settingsController = new SettingsController();
 		mainWin = mainWindow;
 	}
 
@@ -45,23 +42,15 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 		if(e.getActionCommand().equalsIgnoreCase("Open Folder")){
 			
 			chooser = new JFileChooser(); 
-//		    chooser.setCurrentDirectory(new java.io.File("."));
 		    chooser.setCurrentDirectory(new File(".//inputs"));
 		    chooser.setDialogTitle(choosertitle);
 		    chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		    //
 		    // disable the "All files" option.
-		    //
 		    chooser.setAcceptAllFileFilterUsed(false);
-		    //    
 		   
 		    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
-		      System.out.println("getCurrentDirectory(): " 
-		         +  chooser.getCurrentDirectory());
-		      System.out.println("getSelectedFile() : " 
-		         +  chooser.getSelectedFile());
-		      
-		      //Todo
+		      System.out.println("getCurrentDirectory(): "  +  chooser.getCurrentDirectory());
+		      System.out.println("getSelectedFile() : "     +  chooser.getSelectedFile());
 		      //1.Read File In
 		      // TimeSeriesMOdel <- CsvReader.readAll(dir)
 		      tsModel = new CSVReader().readCSVs(chooser.getSelectedFile());
@@ -111,6 +100,8 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 		this.chartcontroller = chartcontroller;
 	}
 
-	
+	public SettingsController getSettingsController(){
+		return this.settingsController;
+	}
 
 }

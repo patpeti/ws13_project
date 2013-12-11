@@ -14,17 +14,18 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import at.ac.tuwien.thesis.scheduler.controller.InputController;
+import at.ac.tuwien.thesis.scheduler.controller.SettingsController;
 import at.ac.tuwien.thesis.scheduler.enums.Forecasts;
 
 public class ControlPanel {
 	
-	private InputController ic;
-
+	private SettingsController sc;
+	JCheckBox chckbxNewCheckBox;
+	JComboBox comboBox,comboBox1,comboBox2,comboBox3;
 	
 	
-	public ControlPanel(InputController inputcontroller){
-		this.ic = inputcontroller;
+	public ControlPanel(SettingsController settingscontroller){
+		this.sc = settingscontroller;
 	}
 	
 	public JPanel getControlPanel(){
@@ -66,29 +67,57 @@ public class ControlPanel {
 		panel_3.add(panel_6);
 		panel_6.setLayout(new BoxLayout(panel_6, BoxLayout.Y_AXIS));
 		
-		JComboBox comboBox = new JComboBox();
+		comboBox = new JComboBox();
 		panel_6.add(comboBox);
 		comboBox.setModel(new DefaultComboBoxModel(Forecasts.values()));
 		
-		JComboBox comboBox1 = new JComboBox();
+		comboBox1 = new JComboBox();
 		comboBox1.setModel(new DefaultComboBoxModel(Forecasts.values()));
 		panel_6.add(comboBox1);
 		
-		JComboBox comboBox2 = new JComboBox();
+		comboBox2 = new JComboBox();
 		comboBox2.setModel(new DefaultComboBoxModel(Forecasts.values()));
 		panel_6.add(comboBox2);
 		
-		JComboBox comboBox3 = new JComboBox();
+		comboBox3 = new JComboBox();
 		comboBox3.setModel(new DefaultComboBoxModel(Forecasts.values()));
 		panel_6.add(comboBox3);
-		
-		
-	JCheckBox chckbxNewCheckBox = new JCheckBox("Same for all");
-	chckbxNewCheckBox.setSelected(true);
+
+
+		chckbxNewCheckBox = new JCheckBox("Same for all");
+		chckbxNewCheckBox.setSelected(true);
 		panel_sub.add(chckbxNewCheckBox, BorderLayout.NORTH);
+
+		sc.setView(this);
+		comboBox.addActionListener(sc);
+		comboBox1.addActionListener(sc);
+		comboBox2.addActionListener(sc);
+		comboBox3.addActionListener(sc);
 		
 		return panel_sub;
-		
+
 	}
+	
+	public boolean isAllSameSelected(){
+		return chckbxNewCheckBox.isSelected();
+	}
+
+	public JComboBox getComboBox() {
+		return comboBox;
+	}
+
+	public JComboBox getComboBox1() {
+		return comboBox1;
+	}
+
+	public JComboBox getComboBox2() {
+		return comboBox2;
+	}
+
+	public JComboBox getComboBox3() {
+		return comboBox3;
+	}
+
+	
 	
 }
