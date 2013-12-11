@@ -3,6 +3,7 @@ package at.ac.tuwien.thesis.scheduler.controller;
 import java.awt.Color;
 import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JPanel;
 
@@ -19,6 +20,7 @@ import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 
+import at.ac.tuwien.thesis.scheduler.enums.Forecasts;
 import at.ac.tuwien.thesis.scheduler.model.TimeSeriesHolder;
 
 public class ChartController {
@@ -55,42 +57,28 @@ public class ChartController {
 			renderer.setDrawSeriesLineAsPath(true);
 		}
 
-//		DateAxis axis = (DateAxis) plot.getDomainAxis();
-//		axis.setDateFormatOverride(new SimpleDateFormat("MMM-yyyy"));
-
 		return chart;
 
 	}
 
-	 private XYDataset createDataset(String dim) {
-		 
-		 
-		 List<Double> valueListe = tsHolder.getDimension(dim);
-		 
-		 XYSeries s1 = new XYSeries(dim);
-		 int i=1;
-		 for(Double value : valueListe){
-			 s1.add(i,value);
-			 i++;
-		 }
-//		         s1.add(new Month(2, 2001), 181.8);
-		         		 
-		         // ******************************************************************
-		         //  More than 150 demo applications are included with the JFreeChart
-		         //  Developer Guide...for more information, see:
-		         //
-		         //  >   http://www.object-refinery.com/jfreechart/guide.html
-		         //
-		         // ******************************************************************
-		 
-		         XYSeriesCollection dataset = new XYSeriesCollection();
-		         dataset.addSeries(s1);
-//		         dataset.addSeries(s2);
-		 
-		         return dataset;
-		 
-		     }
-	
+	private XYDataset createDataset(String dim) {
+
+
+		List<Double> valueListe = tsHolder.getDimension(dim);
+
+		XYSeries s1 = new XYSeries(dim);
+		int i=1;
+		for(Double value : valueListe){
+			s1.add(i,value);
+			i++;
+		}
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		dataset.addSeries(s1);
+
+		return dataset;
+
+	}
+
 
 	public void setData(TimeSeriesHolder timeSeries) {
 		this.tsHolder = timeSeries;
@@ -104,4 +92,8 @@ public class ChartController {
 		return panel;
 	}
 	
+	public JPanel createForecast(String string, Forecasts forecasttype){
+		return this.createChart(string);
+	}
+
 }

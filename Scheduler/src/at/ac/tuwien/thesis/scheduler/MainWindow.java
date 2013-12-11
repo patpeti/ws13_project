@@ -18,26 +18,16 @@ import javax.swing.table.TableModel;
 
 import at.ac.tuwien.thesis.scheduler.controller.ChartController;
 import at.ac.tuwien.thesis.scheduler.controller.InputController;
-import at.ac.tuwien.thesis.scheduler.controller.listeners.ControllerCallbackListener;
-
-import javax.swing.JLabel;
-import javax.swing.JCheckBox;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.DefaultComboBoxModel;
-import java.awt.Component;
-import java.awt.Rectangle;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
-import at.ac.tuwien.thesis.scheduler.enums.Forecasts;
+import at.ac.tuwien.thesis.scheduler.controller.ForecastController;
 import at.ac.tuwien.thesis.scheduler.gui.ControlPanel;
 
-public class MainWindow implements ControllerCallbackListener {
+public class MainWindow{
 
 	private JFrame frame;
 	private JTable table;
 	JPanel panel_1,panel_2;
 	private ChartController chartcontroller;
+	private ForecastController settingscontroller;
 
 	/**
 	 * Launch the application.
@@ -47,7 +37,7 @@ public class MainWindow implements ControllerCallbackListener {
 			public void run() {
 				try {
 					MainWindow window = new MainWindow();
-					window.frame.setVisible(true);
+					window.getFrame().setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -70,11 +60,11 @@ public class MainWindow implements ControllerCallbackListener {
 		InputController inputcontroller = new InputController(this);
 		
 		frame = new JFrame();
-		frame.setBounds(100, 100, 1024, 768);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		getFrame().setBounds(100, 100, 1024, 768);
+		getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JMenuBar menuBar = new JMenuBar();
-		frame.setJMenuBar(menuBar);
+		getFrame().setJMenuBar(menuBar);
 		
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
@@ -83,7 +73,7 @@ public class MainWindow implements ControllerCallbackListener {
 		mnFile.add(mntmOpenFolder);
 		mntmOpenFolder.addActionListener(inputcontroller);
 		JPanel panel = new JPanel();
-		frame.getContentPane().add(panel, BorderLayout.NORTH);
+		getFrame().getContentPane().add(panel, BorderLayout.NORTH);
 		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -103,7 +93,7 @@ public class MainWindow implements ControllerCallbackListener {
 		
 
 		panel_1 = new JPanel();
-		frame.getContentPane().add(panel_1, BorderLayout.CENTER);
+		getFrame().getContentPane().add(panel_1, BorderLayout.CENTER);
 		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.Y_AXIS));
 		
 		inputcontroller.getListModel().addElement("Please Load Directory");
@@ -111,9 +101,11 @@ public class MainWindow implements ControllerCallbackListener {
 		chartcontroller = new ChartController();
 		inputcontroller.addChartController(chartcontroller);
 	
+		settingscontroller = new ForecastController(inputcontroller);
+		inputcontroller.addSettingsController(settingscontroller);
 		
 		panel_2 = new JPanel();
-		frame.getContentPane().add(panel_2, BorderLayout.EAST);
+		getFrame().getContentPane().add(panel_2, BorderLayout.EAST);
 		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
 		
 		
@@ -127,21 +119,29 @@ public class MainWindow implements ControllerCallbackListener {
 		
 	}
 
-	@Override
 	public void FileLoadReady(TableModel model) {
 		// TODO Auto-generated method stub
 		table.setModel(model);
 		table.repaint();
 		panel_1.removeAll();
+		panel_2.removeAll();
 		panel_1.add(chartcontroller.createChart("CPU"));
 		panel_1.add(chartcontroller.createChart("NET"));
 		panel_1.add(chartcontroller.createChart("MEM"));
 		panel_1.add(chartcontroller.createChart("DISK"));
-//		panel_1.add(chartcontroller.createDemoPanel());
 //		
-//		panel_2.add(chartcontroller.createDemoPanel());
 //		panel_2.add(chartcontroller.createDemoPanel());
 		panel_1.validate();
 		panel_2.validate();
+		this.getFrame().validate();
 	}
+	
+	public JPanel getForecastPanel(){
+		return this.panel_2;
+	}
+
+	public JFrame getFrame() {
+		return frame;
+	}
+
 }

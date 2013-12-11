@@ -10,7 +10,7 @@ import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import at.ac.tuwien.thesis.scheduler.controller.listeners.ControllerCallbackListener;
+import at.ac.tuwien.thesis.scheduler.MainWindow;
 import at.ac.tuwien.thesis.scheduler.model.ListModel;
 import at.ac.tuwien.thesis.scheduler.model.TableModel;
 import at.ac.tuwien.thesis.scheduler.model.TimeSeriesModel;
@@ -25,14 +25,13 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 	private IListModel listmodel;
 	private ITableModel tableModel;
 	private TimeSeriesModel tsModel;
-	ControllerCallbackListener mainWin;
+	MainWindow mainWin;
 	private ChartController chartcontroller;
-	private SettingsController settingsController;
+	private ForecastController settingsController;
 
-	public InputController(ControllerCallbackListener mainWindow) {
+	public InputController(MainWindow mainWindow) {
 		listmodel = new ListModel();
 		tableModel = new TableModel();
-		settingsController = new SettingsController();
 		mainWin = mainWindow;
 	}
 
@@ -54,6 +53,7 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 		      //1.Read File In
 		      // TimeSeriesMOdel <- CsvReader.readAll(dir)
 		      tsModel = new CSVReader().readCSVs(chooser.getSelectedFile());
+		      settingsController.setData(tsModel);
 		      //2.) fill list: TsModel.getkeys
 		      this.getListModel().clear();
 		      for (String key : tsModel.getTsModel().keySet()){
@@ -100,8 +100,20 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 		this.chartcontroller = chartcontroller;
 	}
 
-	public SettingsController getSettingsController(){
+	public ForecastController getSettingsController(){
 		return this.settingsController;
+	}
+	
+	public ChartController getChartController(){
+		return this.chartcontroller;
+	}
+
+	public void addSettingsController(ForecastController settingscontroller) {
+		this.settingsController = settingscontroller;
+		
+	}
+	public MainWindow getMainWindow(){
+		return this.mainWin;
 	}
 
 }

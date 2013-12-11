@@ -14,17 +14,17 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import at.ac.tuwien.thesis.scheduler.controller.SettingsController;
+import at.ac.tuwien.thesis.scheduler.controller.ForecastController;
 import at.ac.tuwien.thesis.scheduler.enums.Forecasts;
 
 public class ControlPanel {
 	
-	private SettingsController sc;
+	private ForecastController sc;
 	JCheckBox chckbxNewCheckBox;
 	JComboBox comboBox,comboBox1,comboBox2,comboBox3;
 	
 	
-	public ControlPanel(SettingsController settingscontroller){
+	public ControlPanel(ForecastController settingscontroller){
 		this.sc = settingscontroller;
 	}
 	
@@ -93,9 +93,10 @@ public class ControlPanel {
 		comboBox1.addActionListener(sc);
 		comboBox2.addActionListener(sc);
 		comboBox3.addActionListener(sc);
+		button1.addActionListener(sc);
+		button2.addActionListener(sc);
 		
 		return panel_sub;
-
 	}
 	
 	public boolean isAllSameSelected(){
