@@ -48,8 +48,8 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 		    chooser.setAcceptAllFileFilterUsed(false);
 		   
 		    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) { 
-		      System.out.println("getCurrentDirectory(): "  +  chooser.getCurrentDirectory());
-		      System.out.println("getSelectedFile() : "     +  chooser.getSelectedFile());
+//		      System.out.println("getCurrentDirectory(): "  +  chooser.getCurrentDirectory());
+//		      System.out.println("getSelectedFile() : "     +  chooser.getSelectedFile());
 		      //1.Read File In
 		      // TimeSeriesMOdel <- CsvReader.readAll(dir)
 		      tsModel = new CSVReader().readCSVs(chooser.getSelectedFile());
@@ -84,7 +84,6 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 
 	@Override
 	public void valueChanged(ListSelectionEvent e) {
-		System.out.println("ValueChanged");
 		JList<String> list = (JList<String>) e.getSource();
 		String elem = list.getSelectedValue();
 		this.getTableModel().setData(tsModel.getTsModel().get(elem));

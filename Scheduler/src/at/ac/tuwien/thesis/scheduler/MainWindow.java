@@ -120,7 +120,6 @@ public class MainWindow{
 	}
 
 	public void FileLoadReady(TableModel model) {
-		// TODO Auto-generated method stub
 		table.setModel(model);
 		table.repaint();
 		panel_1.removeAll();

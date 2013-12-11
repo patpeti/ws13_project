@@ -61,12 +61,11 @@ public class ForecastController implements ActionListener{
 	}
 
 	private void ShowForecast() {
-		System.out.println("Show Forecast");
 		this.inputcontroller.getMainWindow().getForecastPanel().removeAll();
 		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("CPU",(ForecastType)view.getComboBox().getSelectedItem()));
-		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("NET",(ForecastType)view.getComboBox().getSelectedItem()));
-		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("MEM",(ForecastType)view.getComboBox().getSelectedItem()));
-		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("DISK",(ForecastType)view.getComboBox().getSelectedItem()));
+		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("NET",(ForecastType)view.getComboBox1().getSelectedItem()));
+		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("MEM",(ForecastType)view.getComboBox2().getSelectedItem()));
+		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("DISK",(ForecastType)view.getComboBox3().getSelectedItem()));
 		this.inputcontroller.getMainWindow().getFrame().validate();
 	}
 
