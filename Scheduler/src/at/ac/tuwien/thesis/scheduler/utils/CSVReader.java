@@ -17,8 +17,6 @@ public class CSVReader {
 		System.out.println("reading files...");
 		for(File f : dir.listFiles()){
 			if(!f.getName().endsWith("csv")) continue;
-			System.out.print(".");
-			
 			BufferedReader br = null;
 			String line;
 			String cvsSplitBy = ";";
