@@ -10,11 +10,11 @@ import javax.swing.JComboBox;
 import javax.swing.JPanel;
 
 import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
-import at.ac.tuwien.thesis.scheduler.gui.ControlPanel;
+import at.ac.tuwien.thesis.scheduler.gui.ForecastPanel;
 import at.ac.tuwien.thesis.scheduler.model.TimeSeriesModel;
 
 public class ForecastController implements ActionListener{
-	ControlPanel view;
+	ForecastPanel view;
 	TimeSeriesModel tsModel;
 	InputController inputcontroller;
 	
@@ -22,7 +22,7 @@ public class ForecastController implements ActionListener{
 		this.inputcontroller = inputcontroller;
 	}
 
-	public void setView(ControlPanel controlPanel) {
+	public void setView(ForecastPanel controlPanel) {
 		this.view = controlPanel;
 	}
 

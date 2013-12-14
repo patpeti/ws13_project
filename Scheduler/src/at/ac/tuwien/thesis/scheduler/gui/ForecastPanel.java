@@ -17,14 +17,14 @@ import javax.swing.border.EmptyBorder;
 import at.ac.tuwien.thesis.scheduler.controller.ForecastController;
 import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 
-public class ControlPanel {
+public class ForecastPanel {
 	
 	private ForecastController sc;
 	JCheckBox chckbxNewCheckBox;
 	JComboBox comboBox,comboBox1,comboBox2,comboBox3;
 	
 	
-	public ControlPanel(ForecastController settingscontroller){
+	public ForecastPanel(ForecastController settingscontroller){
 		this.sc = settingscontroller;
 	}
 	

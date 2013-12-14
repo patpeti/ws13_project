@@ -19,7 +19,7 @@ import javax.swing.table.TableModel;
 import at.ac.tuwien.thesis.scheduler.controller.ChartController;
 import at.ac.tuwien.thesis.scheduler.controller.InputController;
 import at.ac.tuwien.thesis.scheduler.controller.ForecastController;
-import at.ac.tuwien.thesis.scheduler.gui.ControlPanel;
+import at.ac.tuwien.thesis.scheduler.gui.ForecastPanel;
 
 public class MainWindow{
 
@@ -109,7 +109,7 @@ public class MainWindow{
 		panel_2.setLayout(new BoxLayout(panel_2, BoxLayout.Y_AXIS));
 		
 		
-		ControlPanel cp = new ControlPanel(inputcontroller.getSettingsController());
+		ForecastPanel cp = new ForecastPanel(inputcontroller.getSettingsController());
 		panel.add(cp.getControlPanel());
 		
 		panel.validate();
