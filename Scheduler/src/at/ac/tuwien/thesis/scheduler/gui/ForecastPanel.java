@@ -11,10 +11,12 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import at.ac.tuwien.thesis.scheduler.controller.ForecastController;
+import at.ac.tuwien.thesis.scheduler.enums.DimReductionSelectionType;
 import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 
 public class ForecastPanel {
@@ -22,7 +24,8 @@ public class ForecastPanel {
 	private ForecastController sc;
 	JCheckBox chckbxNewCheckBox;
 	JComboBox comboBox,comboBox1,comboBox2,comboBox3;
-	
+	JSpinner spinner;
+	private JComboBox comboBox_dimred;
 	
 	public ForecastPanel(ForecastController settingscontroller){
 		this.sc = settingscontroller;
@@ -41,9 +44,7 @@ public class ForecastPanel {
 		JButton button1 = new JButton("Show Forecast");
 		panel_4.add(button1);
 		
-//		JButton button2 = new JButton("Start Simulation");
-//		panel_4.add(button2);
-//		
+
 		JPanel panel_5 = new JPanel();
 		panel_3.add(panel_5);
 		panel_5.setLayout(new BoxLayout(panel_5, BoxLayout.Y_AXIS));
@@ -62,6 +63,8 @@ public class ForecastPanel {
 		panel_5.add(lab3);
 		JLabel lab4 = new JLabel("DISK");
 		panel_5.add(lab4);
+		JLabel lab5 = new JLabel("Dim Reduction");
+		panel_5.add(lab5);
 		
 		JPanel panel_6 = new JPanel();
 		panel_3.add(panel_6);
@@ -83,6 +86,9 @@ public class ForecastPanel {
 		comboBox3.setModel(new DefaultComboBoxModel(ForecastType.values()));
 		panel_6.add(comboBox3);
 
+		comboBox_dimred = new JComboBox();
+		panel_6.add(comboBox_dimred);
+		comboBox_dimred.setModel(new DefaultComboBoxModel(DimReductionSelectionType.values()));
 
 		chckbxNewCheckBox = new JCheckBox("Same for all");
 		chckbxNewCheckBox.setSelected(true);
@@ -94,10 +100,10 @@ public class ForecastPanel {
 		comboBox2.addActionListener(sc);
 		comboBox3.addActionListener(sc);
 		button1.addActionListener(sc);
-//		button2.addActionListener(sc);
 		
 		return panel_sub;
 	}
+	
 	
 	public boolean isAllSameSelected(){
 		return chckbxNewCheckBox.isSelected();
@@ -119,6 +125,26 @@ public class ForecastPanel {
 		return comboBox3;
 	}
 
-	
+	public Integer getDimReductionFactor(){
+		if(comboBox_dimred.equals(DimReductionSelectionType._2x)){
+			return 2;
+		}else if(comboBox_dimred.equals(DimReductionSelectionType._3x)){
+			return 3;
+		}else if(comboBox_dimred.equals(DimReductionSelectionType._4x)){
+			return 4;
+		}else if(comboBox_dimred.equals(DimReductionSelectionType._6x)){
+			return 6;
+		}else if(comboBox_dimred.equals(DimReductionSelectionType._8x)){
+			return 8;
+		}else if(comboBox_dimred.equals(DimReductionSelectionType._16x)){
+			return 16;
+		}else if(comboBox_dimred.equals(DimReductionSelectionType._32x)){
+			return 32;
+		}else if(comboBox_dimred.equals(DimReductionSelectionType._64x)){
+			return 64;
+		}else{
+			return 1;
+		}
+	}
 	
 }

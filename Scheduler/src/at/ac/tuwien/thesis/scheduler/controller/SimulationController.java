@@ -32,7 +32,7 @@ public class SimulationController implements ActionListener{
 		if(e.getSource() instanceof JButton){
 			JButton button = (JButton) e.getSource();
 
-			if(button.getActionCommand().equalsIgnoreCase("Start Simulation")){
+			if(button.getActionCommand().equalsIgnoreCase("Start Simulaion")){
 				this.StartForecast();
 			}else{
 				System.err.println("huh?");
@@ -40,7 +40,7 @@ public class SimulationController implements ActionListener{
 		}
 	}
 	private void StartForecast() {
-		System.out.println("Starting Simulation");
+		System.out.println("Starting Simulation: "+view.getDimReductionFactor());
 
 	}
 }

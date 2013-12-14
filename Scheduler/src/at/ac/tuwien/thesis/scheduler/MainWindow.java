@@ -76,17 +76,17 @@ public class MainWindow{
 		mntmOpenFolder.addActionListener(inputcontroller);
 		JPanel panel = new JPanel();
 		getFrame().getContentPane().add(panel, BorderLayout.NORTH);
-		panel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		panel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setPreferredSize(new Dimension(200, 200));
+		scrollPane.setPreferredSize(new Dimension(130, 200));
 		panel.add(scrollPane);
 		
 		JList<String> list = new JList<String>(inputcontroller.getListModel());
 		scrollPane.setViewportView(list);
 		list.addListSelectionListener(inputcontroller);
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setPreferredSize(new Dimension(500, 200));
+		scrollPane_1.setPreferredSize(new Dimension(400, 200));
 		panel.add(scrollPane_1);
 		
 		table = new JTable();
