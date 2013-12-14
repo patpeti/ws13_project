@@ -41,9 +41,9 @@ public class ForecastPanel {
 		JButton button1 = new JButton("Show Forecast");
 		panel_4.add(button1);
 		
-		JButton button2 = new JButton("Start Simulation");
-		panel_4.add(button2);
-		
+//		JButton button2 = new JButton("Start Simulation");
+//		panel_4.add(button2);
+//		
 		JPanel panel_5 = new JPanel();
 		panel_3.add(panel_5);
 		panel_5.setLayout(new BoxLayout(panel_5, BoxLayout.Y_AXIS));
@@ -94,7 +94,7 @@ public class ForecastPanel {
 		comboBox2.addActionListener(sc);
 		comboBox3.addActionListener(sc);
 		button1.addActionListener(sc);
-		button2.addActionListener(sc);
+//		button2.addActionListener(sc);
 		
 		return panel_sub;
 	}

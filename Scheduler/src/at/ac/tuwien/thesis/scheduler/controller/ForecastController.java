@@ -33,8 +33,8 @@ public class ForecastController implements ActionListener{
 			
 			if(button.getActionCommand().equalsIgnoreCase("Show Forecast")){
 				this.ShowForecast();
-			}else if(button.getActionCommand().equalsIgnoreCase("Start Simulation")){
-				this.startSim();
+			}else{
+				System.err.println("huh?");
 			}
 			
 		}else if(e.getSource() instanceof JComboBox){
@@ -55,10 +55,7 @@ public class ForecastController implements ActionListener{
 		
 	}
 
-	private void startSim() {
-
-		System.out.println("Strat Sim");
-	}
+	
 
 	private void ShowForecast() {
 		this.inputcontroller.getMainWindow().getForecastPanel().removeAll();

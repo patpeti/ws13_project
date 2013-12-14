@@ -19,7 +19,9 @@ import javax.swing.table.TableModel;
 import at.ac.tuwien.thesis.scheduler.controller.ChartController;
 import at.ac.tuwien.thesis.scheduler.controller.InputController;
 import at.ac.tuwien.thesis.scheduler.controller.ForecastController;
+import at.ac.tuwien.thesis.scheduler.controller.SimulationController;
 import at.ac.tuwien.thesis.scheduler.gui.ForecastPanel;
+import at.ac.tuwien.thesis.scheduler.gui.SimulationPanel;
 
 public class MainWindow{
 
@@ -60,7 +62,7 @@ public class MainWindow{
 		InputController inputcontroller = new InputController(this);
 		
 		frame = new JFrame();
-		getFrame().setBounds(100, 100, 1024, 768);
+		getFrame().setBounds(100, 100, 1200, 768);
 		getFrame().setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JMenuBar menuBar = new JMenuBar();
@@ -98,11 +100,16 @@ public class MainWindow{
 		
 		inputcontroller.getListModel().addElement("Please Load Directory");
 	
+		//******** CONTROLLER BINDINGS ********
+		
 		chartcontroller = new ChartController();
 		inputcontroller.addChartController(chartcontroller);
 	
 		settingscontroller = new ForecastController(inputcontroller);
 		inputcontroller.addSettingsController(settingscontroller);
+		
+		SimulationController simController = new SimulationController(inputcontroller);
+		inputcontroller.addSimulationController(simController);
 		
 		panel_2 = new JPanel();
 		getFrame().getContentPane().add(panel_2, BorderLayout.EAST);
@@ -111,6 +118,9 @@ public class MainWindow{
 		
 		ForecastPanel cp = new ForecastPanel(inputcontroller.getSettingsController());
 		panel.add(cp.getControlPanel());
+		
+		SimulationPanel sp = new SimulationPanel(simController);
+		panel.add(sp.getSimulationPanel());
 		
 		panel.validate();
 			

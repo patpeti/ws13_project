@@ -28,6 +28,7 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 	MainWindow mainWin;
 	private ChartController chartcontroller;
 	private ForecastController settingsController;
+	private SimulationController simController;
 
 	public InputController(MainWindow mainWindow) {
 		listmodel = new ListModel();
@@ -54,6 +55,7 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 		      // TimeSeriesMOdel <- CsvReader.readAll(dir)
 		      tsModel = new CSVReader().readCSVs(chooser.getSelectedFile());
 		      settingsController.setData(tsModel);
+		      simController.setData(tsModel);
 		      //2.) fill list: TsModel.getkeys
 		      this.getListModel().clear();
 		      for (String key : tsModel.getTsModel().keySet()){
@@ -115,4 +117,12 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 		return this.mainWin;
 	}
 
+	public void addSimulationController(SimulationController simController) {
+		this.simController = simController;
+		
+	}
+	public SimulationController getSimulationController(){
+		return this.simController;
+	}
+	
 }
