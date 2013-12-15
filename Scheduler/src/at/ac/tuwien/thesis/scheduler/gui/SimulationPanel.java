@@ -83,22 +83,28 @@ public class SimulationPanel {
 	}
 	
 	public Integer getDimReductionFactor(){
-		if(comboBox_dimred.equals(DimReductionSelectionType._2x)){
+		if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._2x)){
 			return 2;
-		}else if(comboBox_dimred.equals(DimReductionSelectionType._3x)){
+		}else if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._3x)){
 			return 3;
-		}else if(comboBox_dimred.equals(DimReductionSelectionType._4x)){
+		}else if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._4x)){
 			return 4;
-		}else if(comboBox_dimred.equals(DimReductionSelectionType._6x)){
+		}else if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._6x)){
 			return 6;
-		}else if(comboBox_dimred.equals(DimReductionSelectionType._8x)){
+		}else if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._8x)){
 			return 8;
-		}else if(comboBox_dimred.equals(DimReductionSelectionType._16x)){
+		}else if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._16x)){
 			return 16;
-		}else if(comboBox_dimred.equals(DimReductionSelectionType._32x)){
+		}else if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._32x)){
 			return 32;
-		}else if(comboBox_dimred.equals(DimReductionSelectionType._64x)){
+		}else if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._64x)){
 			return 64;
+		}else if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._128x)){
+			return 128;
+		}else if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._256x)){
+			return 256;
+		}else if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._1024x)){
+			return 1024;
 		}else{
 			return 1;
 		}

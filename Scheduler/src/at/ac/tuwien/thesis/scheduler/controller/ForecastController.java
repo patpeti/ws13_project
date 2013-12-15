@@ -58,11 +58,20 @@ public class ForecastController implements ActionListener{
 	
 
 	private void ShowForecast() {
+		
+	
+		
 		this.inputcontroller.getMainWindow().getForecastPanel().removeAll();
-		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("CPU",(ForecastType)view.getComboBox().getSelectedItem()));
-		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("NET",(ForecastType)view.getComboBox1().getSelectedItem()));
-		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("MEM",(ForecastType)view.getComboBox2().getSelectedItem()));
-		this.inputcontroller.getMainWindow().getForecastPanel().add(this.inputcontroller.getChartController().createForecast("DISK",(ForecastType)view.getComboBox3().getSelectedItem()));
+		ChartController cs = this.inputcontroller.getChartController();
+		ForecastType f1 = (ForecastType)view.getComboBox().getSelectedItem();
+		ForecastType f2 = (ForecastType)view.getComboBox1().getSelectedItem();
+		ForecastType f3 = (ForecastType)view.getComboBox2().getSelectedItem();
+		ForecastType f4 = (ForecastType)view.getComboBox3().getSelectedItem();
+		Integer dr_factor = view.getDimReductionFactor();
+		this.inputcontroller.getMainWindow().getForecastPanel().add(cs.createForecast("CPU",f1,dr_factor));
+		this.inputcontroller.getMainWindow().getForecastPanel().add(cs.createForecast("NET",f2,dr_factor));
+		this.inputcontroller.getMainWindow().getForecastPanel().add(cs.createForecast("MEM",f3,dr_factor));
+		this.inputcontroller.getMainWindow().getForecastPanel().add(cs.createForecast("DISK",f4,dr_factor));
 		this.inputcontroller.getMainWindow().getFrame().validate();
 	}
 

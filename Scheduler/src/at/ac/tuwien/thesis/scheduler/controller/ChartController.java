@@ -94,19 +94,19 @@ public class ChartController {
 		return panel;
 	}
 	
-	public JPanel createForecast(String dim, ForecastType forecastType){
-		JFreeChart chart = createChart(createForecastData(dim,forecastType),dim);
+	public JPanel createForecast(String dim, ForecastType forecastType, Integer dr_factor){
+		JFreeChart chart = createChart(createForecastData(dim,forecastType,dr_factor),dim);
 		//TODO enable this
-//		chart.getXYPlot().getRenderer().setSeriesPaint(1, Color.BLUE);
+		chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.BLUE);
 		ChartPanel panel = new ChartPanel(chart);
 		panel.setFillZoomRectangle(true);
 		panel.setMouseWheelEnabled(true);
 		return panel;
 	}
 
-	private XYDataset createForecastData(String dim, ForecastType forecastType) {
+	private XYDataset createForecastData(String dim, ForecastType forecastType, Integer dr_factor) {
 		Forecaster f = new Forecaster();
-		List<Double> values = f.calculateForecast(tsHolder.getDimension(dim),forecastType);
+		List<Double> values = f.calculateForecast(tsHolder.getDimension(dim),forecastType,dr_factor);
 		if(values == null) return null;
 		XYSeries s1 = new XYSeries(dim);
 		int i = tsHolder.getDimension(dim).size();
