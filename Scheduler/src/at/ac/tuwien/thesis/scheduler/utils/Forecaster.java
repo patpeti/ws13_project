@@ -3,6 +3,7 @@ package at.ac.tuwien.thesis.scheduler.utils;
 import java.util.List;
 
 import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
+import at.ac.tuwien.thesis.scheduler.utils.forecasts.NNARForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.NaiveForecaster;
 
 public class Forecaster {
@@ -12,7 +13,8 @@ public class Forecaster {
 			NaiveForecaster naive = new NaiveForecaster();
 			return naive.forecast(valueList,dr_factor);
 		}else if(forecastType.equals(ForecastType.NNAR)){
-			return null;
+			NNARForecaster nnar = new NNARForecaster();
+			return nnar.forecast(valueList,dr_factor);
 		}else if(forecastType.equals(ForecastType.HOLTWINTERS)){
 			return null;
 		}else{
