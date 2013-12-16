@@ -1,9 +1,17 @@
 package at.ac.tuwien.thesis.scheduler.utils.forecasts;
 
+import java.util.Enumeration;
 import java.util.List;
+
+import org.rosuda.JRI.REXP;
+import org.rosuda.JRI.RList;
+import org.rosuda.JRI.RVector;
+import org.rosuda.JRI.Rengine;
 
 import at.ac.tuwien.thesis.scheduler.enums.DimReductionStrategyType;
 import at.ac.tuwien.thesis.scheduler.enums.InterpolationStrategyType;
+import at.ac.tuwien.thesis.scheduler.utils.forecasts.rutil.REngineSingleton;
+import at.ac.tuwien.thesis.scheduler.utils.forecasts.rutil.TextConsole;
 import at.ac.tuwien.thesis.scheduler.utils.tsutils.DimReductionStrategy;
 import at.ac.tuwien.thesis.scheduler.utils.tsutils.InterpolationStrategy;
 
@@ -21,8 +29,19 @@ public class NNARForecaster {
 	}
 
 	private List<Double> nnar(List<Double> reduced) {
-		// TODO R integration here
-		return null;
+		
+			Rengine re= REngineSingleton.getREngine();
+		
+	        
+			try {
+				System.out.println (re.eval ("runif(1)").asDouble ());
+		        
+			}catch(Exception e){
+				System.out.println("EX:"+e);
+				e.printStackTrace();
+			}
+	        
+	        return reduced;
 	}
 
 	
