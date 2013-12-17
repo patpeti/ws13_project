@@ -13,6 +13,7 @@ public class REngineSingleton {
         if (!re.waitForR()) {
             System.out.println("Cannot load R");
         }
+        re.eval("library(\"forecast\", lib.loc=\"C:/Users/ppdesk/Documents/R/win-library/3.0\")");
         
 	}
 	
