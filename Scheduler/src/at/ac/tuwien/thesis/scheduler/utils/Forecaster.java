@@ -4,10 +4,13 @@ import java.util.List;
 
 import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.DECOMPForecaster;
+import at.ac.tuwien.thesis.scheduler.utils.forecasts.FourierForecaster;
+import at.ac.tuwien.thesis.scheduler.utils.forecasts.HWForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.MaxForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.MeanForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.NNARForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.NaiveForecaster;
+import at.ac.tuwien.thesis.scheduler.utils.forecasts.TBATSForecaster;
 
 public class Forecaster {
 
@@ -27,12 +30,15 @@ public class Forecaster {
 		}else if(forecastType.equals(ForecastType.DECOMP)){
 			DECOMPForecaster dec = new DECOMPForecaster();
 			return dec.forecast(valueList, dr_factor);
-		}else if(forecastType.equals(ForecastType.MEAN)){
-			return null;
-		}else if(forecastType.equals(ForecastType.MEAN)){
-			return null;
-		}else if(forecastType.equals(ForecastType.MEAN)){
-			return null;
+		}else if(forecastType.equals(ForecastType.HW)){
+			HWForecaster hw = new HWForecaster();
+			return hw.forecast(valueList, dr_factor);
+		}else if(forecastType.equals(ForecastType.TBATS)){
+			TBATSForecaster tbats = new TBATSForecaster();
+			return tbats.forecast(valueList, dr_factor);
+		}else if(forecastType.equals(ForecastType.FOURIER)){
+			FourierForecaster fourier = new FourierForecaster();
+			return fourier.forecast(valueList, dr_factor);
 		}else if(forecastType.equals(ForecastType.MEAN)){
 			return null;
 		}else{
