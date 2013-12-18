@@ -4,6 +4,7 @@ import java.util.List;
 
 import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.DECOMPForecaster;
+import at.ac.tuwien.thesis.scheduler.utils.forecasts.DSHWForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.FourierForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.HWForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.MaxForecaster;
@@ -39,8 +40,9 @@ public class Forecaster {
 		}else if(forecastType.equals(ForecastType.FOURIER)){
 			FourierForecaster fourier = new FourierForecaster();
 			return fourier.forecast(valueList, dr_factor);
-		}else if(forecastType.equals(ForecastType.MEAN)){
-			return null;
+		}else if(forecastType.equals(ForecastType.DSHW)){
+			DSHWForecaster dswh = new DSHWForecaster();
+			return dswh.forecast(valueList, dr_factor);
 		}else{
 			return null;
 		}

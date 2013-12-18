@@ -2,5 +2,5 @@ package at.ac.tuwien.thesis.scheduler.enums;
 
 public enum ForecastType {
 
-	NONE,NAIVE,NNAR,MAX,MEAN,TBATS,DECOMP,HW,FOURIER
+	NONE,NAIVE,NNAR,DECOMP,HW,DSHW,FOURIER,MAX,MEAN,TBATS
 }
