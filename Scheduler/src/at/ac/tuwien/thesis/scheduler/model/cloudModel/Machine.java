@@ -1,6 +1,7 @@
 package at.ac.tuwien.thesis.scheduler.model.cloudModel;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import at.ac.tuwien.thesis.scheduler.Constants;
@@ -20,11 +21,11 @@ public class Machine {
 	}
 	
 	public void addApplication(Application app) throws ResourceAllocationException{
-		this.appListe.add(app);
 		this.addCpu(app.getActualCPU());
 		this.addDisk(app.getActualDISK());
 		this.addMem(app.getActualMEM());
 		this.addNet(app.getActualNET());
+		this.appListe.add(app);
 	}
 	
 	public void removeApplication(Application app){
@@ -148,6 +149,33 @@ public class Machine {
 		}
 	}
 
+	public List<Application> iterate() {
+		List<Application> toReschedule = new ArrayList<Application>();
+		List<Application> temp = appListe;
+		for(Application app : appListe){
+			this.removeApplication(app);
+		}
+		for(Application app : temp){
+			//increase pointer
+			app.increasePointer();
+			try {
+				this.addApplication(app);
+			} catch (ResourceAllocationException e) {
+				System.out.println("reschedule needed");
+				toReschedule.add(app);
+			}
+		}
+		return toReschedule;
+	}
+
+	public double getUtilization(){
+		double utilisation = 100-((getAvailableCPU()/maxCPU)*100);
+		utilisation += 100-((getAvailableMEM()/maxMEM)*100);
+		utilisation += 100-((getAvailableDISK()/maxDISK)*100);
+		utilisation += 100-((getAvailableNET()/maxNET)*100);
+		utilisation = utilisation/4;
+		return utilisation;
+	}
 
 
 	
