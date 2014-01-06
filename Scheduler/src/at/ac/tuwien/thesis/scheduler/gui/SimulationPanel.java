@@ -22,6 +22,7 @@ public class SimulationPanel {
 	private SimulationController sc;
 	private JComboBox comboBox;
 	private JComboBox comboBox_dimred;
+	private JSpinner spinner,spinner2;
 
 	public SimulationPanel(SimulationController simController){
 		this.sc = simController;
@@ -38,7 +39,7 @@ public class SimulationPanel {
 		left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
 		simPanel.add(left, BorderLayout.WEST);
 		
-		JLabel label1 = new JLabel("Confidance Level");
+		JLabel label1 = new JLabel("Confidence Level");
 		label1.setBorder(new EmptyBorder(0, 0, 10, 0));
 		left.add(label1);
 		JLabel label2 = new JLabel("Sim Type");
@@ -56,7 +57,7 @@ public class SimulationPanel {
 		right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
 		simPanel.add(right,BorderLayout.EAST);
 		
-		JSpinner spinner = new JSpinner();
+		spinner = new JSpinner();
 		spinner.setValue(new Integer(90));
 		right.add(spinner);
 		
@@ -64,7 +65,7 @@ public class SimulationPanel {
 		right.add(comboBox);
 		comboBox.setModel(new DefaultComboBoxModel(SimType.values()));
 		
-		JSpinner spinner2 = new JSpinner();
+		spinner2 = new JSpinner();
 		spinner2.setValue(new Integer(50));
 		right.add(spinner2);
 		
@@ -83,6 +84,7 @@ public class SimulationPanel {
 	}
 	
 	public Integer getDimReductionFactor(){
+
 		if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._2x)){
 			return 2;
 		}else if(comboBox_dimred.getSelectedItem().equals(DimReductionSelectionType._3x)){
@@ -108,5 +110,24 @@ public class SimulationPanel {
 		}else{
 			return 1;
 		}
+	}
+	
+	public SimType getSimulationType(){
+		if(comboBox.getSelectedItem().equals(SimType.NAIVE)){
+			return SimType.NAIVE;
+		}else if(comboBox.getSelectedItem().equals(SimType.SHORTTERM)){
+			return SimType.SHORTTERM;
+		}else if(comboBox.getSelectedItem().equals(SimType.LONGTERM)){
+			return SimType.LONGTERM;
+		}
+		return null;
+	}
+	
+	public Integer getTestTrainSplit(){
+		return (Integer) spinner2.getValue();
+	}
+	
+	public Integer getConfidenceLevel(){
+		return (Integer) spinner.getValue();
 	}
 }

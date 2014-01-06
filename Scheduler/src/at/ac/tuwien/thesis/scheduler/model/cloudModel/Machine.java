@@ -1,0 +1,154 @@
+package at.ac.tuwien.thesis.scheduler.model.cloudModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import at.ac.tuwien.thesis.scheduler.Constants;
+
+public class Machine {
+	
+	List<Application> appListe;
+	double cpu,disk,mem,net;
+	double maxCPU,maxNET,maxDISK,maxMEM;
+	
+	public Machine(){
+		this.maxCPU = Constants.maxCPU;
+		this.maxDISK = Constants.maxDISK;
+		this.maxNET = Constants.maxNET;
+		this.maxMEM = Constants.maxMEM;
+		appListe = new ArrayList<Application>();
+	}
+	
+	public void addApplication(Application app) throws ResourceAllocationException{
+		this.appListe.add(app);
+		this.addCpu(app.getActualCPU());
+		this.addDisk(app.getActualDISK());
+		this.addMem(app.getActualMEM());
+		this.addNet(app.getActualNET());
+	}
+	
+	public void removeApplication(Application app){
+		this.appListe.remove(app);
+		this.subtractCpu(app.getActualCPU());
+		this.subtractDisk(app.getActualDISK());
+		this.subtractMem(app.getActualMEM());
+		this.subtractNet(app.getActualNET());
+	}
+	
+	public List<Application> getApps(){
+		return appListe;
+	}
+
+	public double getAvailableCPU() {
+		return maxCPU-cpu;
+	}
+
+	public double getAvailableDISK() {
+		return maxDISK-disk;
+	}
+
+	public double getAvailableMEM() {
+		return maxMEM-mem;
+	}
+
+	public double getAvailableNET() {
+		return maxNET-net;
+	}
+	
+	
+	public void setCpu(double cpu) throws ResourceAllocationException {
+		if(cpu > maxCPU){
+			throw new ResourceAllocationException();
+		}else{
+			this.cpu = cpu;
+		}
+	}
+
+	public void setDisk(double disk) throws ResourceAllocationException {
+		if(disk > maxDISK){
+			throw new ResourceAllocationException();
+		}else{
+			this.disk = disk;
+		}
+	}
+
+	public void setMem(double mem) throws ResourceAllocationException {
+		if(mem > maxMEM){
+			throw new ResourceAllocationException();
+		}else{
+			this.mem = mem;
+		}
+	}
+
+	public void setNet(double net) throws ResourceAllocationException {
+		if(net > maxNET){
+			throw new ResourceAllocationException();
+		}else{
+			this.net = net;
+		}
+	}
+
+	public void addCpu(double cpu) throws ResourceAllocationException {
+		this.cpu += cpu ;
+		if(this.cpu > maxCPU){
+			this.cpu -=cpu;
+			throw new ResourceAllocationException();
+		}
+	}
+
+	public void addNet(double net) throws ResourceAllocationException {
+		this.net += net ;
+		if(this.net > maxNET){
+			this.net -=net;
+			throw new ResourceAllocationException();
+		}
+	}
+	
+	public void addDisk(double disk) throws ResourceAllocationException {
+		this.disk += disk ;
+		if(this.disk > maxDISK){
+			this.disk -=disk;
+			throw new ResourceAllocationException();
+		}
+	}
+	
+	public void addMem(double mem) throws ResourceAllocationException {
+		this.mem += mem;
+		if(this.mem > maxMEM){
+			this.mem -=mem;
+			throw new ResourceAllocationException();
+		}
+	}
+	
+	public void subtractCpu(double cpu){
+		this.cpu -= cpu;
+		if(cpu < 0){
+			System.err.println("cpu less than 0");
+		}
+}
+
+	public void subtractNet(double net){
+		this.net -= net ;
+		if(this.net < 0){
+			System.err.println("net less than 0");
+		}
+	}
+	
+	public void subtractDisk(double disk){
+		this.disk -= disk ;
+		if(this.disk < 0){
+			System.err.println("disk less than 0");
+		}
+	}
+	
+	public void subtractMem(double mem){
+		this.mem -= mem;
+		if(this.mem < 0){
+			System.err.println("mem less than 0");
+		}
+	}
+
+
+
+	
+}
