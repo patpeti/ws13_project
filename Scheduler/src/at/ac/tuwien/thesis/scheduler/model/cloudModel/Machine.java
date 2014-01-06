@@ -9,7 +9,7 @@ import at.ac.tuwien.thesis.scheduler.Constants;
 public class Machine {
 	
 	List<Application> appListe;
-	double cpu,disk,mem,net;
+	double cpu = 0,disk = 0,mem =0,net= 0;
 	double maxCPU,maxNET,maxDISK,maxMEM;
 	
 	public Machine(){
@@ -152,9 +152,9 @@ public class Machine {
 	public List<Application> iterate() {
 		List<Application> toReschedule = new ArrayList<Application>();
 		List<Application> temp = appListe;
-		for(Application app : appListe){
-			this.removeApplication(app);
-		}
+		appListe.clear();
+		this.cpu = 0; this.disk = 0; this.net = 0; this.mem = 0;
+		
 		for(Application app : temp){
 			//increase pointer
 			app.increasePointer();

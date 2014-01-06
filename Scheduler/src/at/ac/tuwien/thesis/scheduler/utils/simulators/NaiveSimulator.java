@@ -54,7 +54,6 @@ public class NaiveSimulator {
 		//start assign it to list of machines
 
 		for(Application app : appList){
-				//1.)try assigning to existing machine that has the capacity
 				addToPM(app);
 			
 		}
