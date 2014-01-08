@@ -1,9 +1,24 @@
 package at.ac.tuwien.thesis.scheduler.utils.simulators;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JFrame;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RectangleInsets;
 
 import at.ac.tuwien.thesis.scheduler.Constants;
 import at.ac.tuwien.thesis.scheduler.model.TimeSeriesHolder;
@@ -133,7 +148,8 @@ public class NaiveSimulator {
 									}
 									break;
 								} catch (ResourceAllocationException e1) {
-									System.err.println("there are avaiable resource but app cannot fit to machine2");
+									System.err.println("FATAL ERROR there are avaiable resource but app cannot fit to machine2");
+									
 								}
 							}
 						}
@@ -172,11 +188,63 @@ public class NaiveSimulator {
 		
 		System.out.println("Number of reschedules: " + numReschedules);
 		
-//		List<Double> utilisationLog;
 //		List<Integer> numPMLog;
+
+		XYSeries s1 = new XYSeries("utilisation");
+		int i=1;
+		for(Double value : utilisationLog){
+			s1.add(i,value);
+			i++;
+		}
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		dataset.addSeries(s1);
+
+		JFreeChart chart = createChart(dataset, "utilisation");
+		ChartPanel panel = new ChartPanel(chart);
+		
+		JFrame frame = new JFrame();
+		frame.setSize(300, 200);
+		frame.setContentPane(panel);
+		frame.setVisible(true);
 		
 	}
 	
+	
+	private JFreeChart createChart(XYDataset dataset,String dim) {
+
+		JFreeChart chart = ChartFactory.createXYLineChart(
+				dim,  // title
+				"Time",             // x-axis label
+				"Usage",   // y-axis label
+				dataset,            // data
+				PlotOrientation.VERTICAL,
+				false,               // create legend?
+				false,               // generate tooltips?
+				false               // generate URLs?
+				);
+
+		chart.setBackgroundPaint(Color.white);
+		XYPlot plot = (XYPlot) chart.getPlot();
+		plot.setBackgroundPaint(Color.lightGray);
+		plot.setDomainGridlinePaint(Color.white);
+		plot.setRangeGridlinePaint(Color.white);
+		plot.setAxisOffset(new RectangleInsets(2.0, 2.0, 2.0, 2.0));
+		plot.setDomainCrosshairVisible(true);
+		plot.setRangeCrosshairVisible(true);
+
+		XYItemRenderer r = plot.getRenderer();
+		if (r instanceof XYLineAndShapeRenderer) {
+			XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
+			renderer.setBaseShapesVisible(false);
+			renderer.setBaseShapesFilled(true);
+			renderer.setDrawSeriesLineAsPath(true);
+			
+		}
+
+		return chart;
+
+	}
+
 	private double calculateUtilization(){
 		double numPm = (double) pmList.size();
 		double sumCPU = 0,sumMEM = 0,sumNET = 0,sumDISK = 0;
@@ -207,7 +275,7 @@ public class NaiveSimulator {
 						assigned = true;
 						break;
 					} catch (ResourceAllocationException e1) {
-						System.err.println("there are avaiable resource but app cannot fit to machine");
+						System.err.println("FATAL ERROR there are avaiable resource but app cannot fit to machine");
 					}
 				}
 			}

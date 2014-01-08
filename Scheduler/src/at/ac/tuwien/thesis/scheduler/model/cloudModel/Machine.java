@@ -59,7 +59,7 @@ public class Machine {
 	
 	public void setCpu(double cpu) throws ResourceAllocationException {
 		if(cpu > maxCPU){
-			throw new ResourceAllocationException();
+			throw new ResourceAllocationException("cpu full");
 		}else{
 			this.cpu = cpu;
 		}
@@ -67,7 +67,7 @@ public class Machine {
 
 	public void setDisk(double disk) throws ResourceAllocationException {
 		if(disk > maxDISK){
-			throw new ResourceAllocationException();
+			throw new ResourceAllocationException("disk full");
 		}else{
 			this.disk = disk;
 		}
@@ -75,7 +75,7 @@ public class Machine {
 
 	public void setMem(double mem) throws ResourceAllocationException {
 		if(mem > maxMEM){
-			throw new ResourceAllocationException();
+			throw new ResourceAllocationException("mem full");
 		}else{
 			this.mem = mem;
 		}
@@ -83,7 +83,7 @@ public class Machine {
 
 	public void setNet(double net) throws ResourceAllocationException {
 		if(net > maxNET){
-			throw new ResourceAllocationException();
+			throw new ResourceAllocationException("net full");
 		}else{
 			this.net = net;
 		}
@@ -163,6 +163,7 @@ public class Machine {
 				this.addApplication(app);
 			} catch (ResourceAllocationException e) {
 				System.out.println("reschedule needed");
+				System.out.println(e.getErrorMsg());
 				toReschedule.add(app);
 			}
 		}
