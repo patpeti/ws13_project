@@ -1,7 +1,6 @@
 package at.ac.tuwien.thesis.scheduler.model.cloudModel;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import at.ac.tuwien.thesis.scheduler.Constants;
@@ -9,7 +8,7 @@ import at.ac.tuwien.thesis.scheduler.Constants;
 public class Machine {
 	
 	List<Application> appListe;
-	double cpu = 0,disk = 0,mem =0,net= 0;
+	double cpu,disk,mem,net;
 	double maxCPU,maxNET,maxDISK,maxMEM;
 	
 	public Machine(){
@@ -17,6 +16,7 @@ public class Machine {
 		this.maxDISK = Constants.maxDISK;
 		this.maxNET = Constants.maxNET;
 		this.maxMEM = Constants.maxMEM;
+		cpu = 0; disk = 0; mem = 0; net =0;
 		appListe = new ArrayList<Application>();
 	}
 	
@@ -151,13 +151,14 @@ public class Machine {
 
 	public List<Application> iterate() {
 		List<Application> toReschedule = new ArrayList<Application>();
-		List<Application> temp = appListe;
+		List<Application> temp = new ArrayList<Application>(appListe);
 		appListe.clear();
 		this.cpu = 0; this.disk = 0; this.net = 0; this.mem = 0;
 		
 		for(Application app : temp){
 			//increase pointer
 			app.increasePointer();
+			
 			try {
 				this.addApplication(app);
 			} catch (ResourceAllocationException e) {

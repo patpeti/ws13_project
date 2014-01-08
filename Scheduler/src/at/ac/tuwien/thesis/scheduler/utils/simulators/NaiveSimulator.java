@@ -30,6 +30,7 @@ public class NaiveSimulator {
 		appList = new ArrayList<Application>();
 		pmList = new ArrayList<Machine>();
 		utilisationLog = new ArrayList<Double>();
+		numPMLog = new ArrayList<Integer>();
 	}
 
 	public void simulate(Integer confidence, Integer split, Integer dimRed) {
@@ -50,6 +51,7 @@ public class NaiveSimulator {
 			Application app = new Application(cpuSeries, memSeries, diskSeries, netSeries, key);
 			appList.add(app);
 		}
+		System.out.println("Creating Apps Finished : "+ appList.size());
 		
 		//start assign it to list of machines
 
@@ -61,26 +63,40 @@ public class NaiveSimulator {
 		//once we have the initial state, start iterating from i = 0 to splitlength
 		//iterate over values -> let PMs adapt changes -> count overall resource utilisation, num of app relocation, SLO violation
 		
-		for(int i = 0; i < splitLength; i++){
+		for(int i = 0; i < splitLength-1; i++){
+			System.out.println("Iteration: "+i);
+			
+				
 			//set Application pointer++ for each application in each machine
 			List<Application> reschedule = new ArrayList<Application>();
 			for(Machine m : pmList){
 				//if ressourceallocationexcption occurs remove app -> assing to reschedule liste
 				//try assign reschedule list to existing PM-s
+//				System.out.print(" utilisation Before: "+ m.getUtilization());
 				reschedule.addAll(m.iterate());
+//				System.out.print(" utilisation After: "+ m.getUtilization());
 				numReschedules += reschedule.size();
+//				System.out.println(" toreschedule: " + reschedule.size());
 			}
 			//assign them to new PM
 			if(!reschedule.isEmpty()){
 				for(Application app : reschedule){
+					System.out.println("rescheduling");
 					addToPM(app);
 				}
 			}
 		
+//			for(Machine m : pmList){
+//				for(Application app : m.getApps()){
+//					System.out.print(app.getName() + " " + app.getPointer() + " ");
+//				}
+//				
+//				System.out.println("");
+//			}
+			
 			//CONSOLIDATION
 			//calculate utilization
 		
-			System.out.println("utilisation: "+ calculateUtilization());
 			utilisationLog.add(i,calculateUtilization());
 			try{
 				//if utilization is low(er) try to migrate one PM-s apps to other PMs
@@ -95,7 +111,7 @@ public class NaiveSimulator {
 										
 					//try all its app to assign to other PM in the List
 					List<Application> tryReschedule = lowest.getApps();
-					Map<Machine,Application> assignmentMap = new HashMap<Machine,Application>();
+					Map<Machine,List<Application>> assignmentMap = new HashMap<Machine,List<Application>>();
 					int rescheduled = 0;
 					pmList.remove(lowest);
 					for(Application app : tryReschedule){
@@ -107,7 +123,15 @@ public class NaiveSimulator {
 								try {
 									m.addApplication(app);
 									rescheduled++;
-									assignmentMap.put(m, app);
+									if(assignmentMap.get(m) == null){
+										List<Application> apps = new ArrayList<Application>();
+										apps.add(app);
+										assignmentMap.put(m, apps);
+									}else{
+										List<Application> apps = assignmentMap.get(m);
+										apps.add(app);
+									}
+									break;
 								} catch (ResourceAllocationException e1) {
 									System.err.println("there are avaiable resource but app cannot fit to machine2");
 								}
@@ -118,7 +142,9 @@ public class NaiveSimulator {
 					if(rescheduled < tryReschedule.size()){
 						//remove new assingments
 						for(Machine m : assignmentMap.keySet()){
-							m.removeApplication(assignmentMap.get(m));
+							for(Application app : assignmentMap.get(m)){
+								m.removeApplication(app);
+							}
 						}
 						pmList.add(lowest);
 						System.out.println("rollback");
@@ -131,24 +157,28 @@ public class NaiveSimulator {
 					
 					numPMLog.add(pmList.size());
 					
-					System.out.println("Pms: \t utilisation: \t reschedules: \t");
-					System.out.println(pmList.size()+"\t" + utilisationLog.get(i) + " \t "+ numReschedules);
 					
 				}
 			}catch(IndexOutOfBoundsException exception){
 					System.out.println("First step ... Do nothing");
 				}
 
+//			System.out.println("Pms: \t utilisation: \t reschedules: \t");
+//			System.out.println(pmList.size()+"\t" + utilisationLog.get(i) + " \t "+ numReschedules);
 			
 			
 		}
 		
 		
+		System.out.println("Number of reschedules: " + numReschedules);
+		
+//		List<Double> utilisationLog;
+//		List<Integer> numPMLog;
 		
 	}
 	
 	private double calculateUtilization(){
-		int numPm = pmList.size();
+		double numPm = (double) pmList.size();
 		double sumCPU = 0,sumMEM = 0,sumNET = 0,sumDISK = 0;
 		for(Machine m : pmList){
 			sumCPU += m.getAvailableCPU();
@@ -156,11 +186,11 @@ public class NaiveSimulator {
 			sumNET += m.getAvailableNET();
 			sumDISK += m.getAvailableDISK();
 		}
-		double utilisation = 100-((sumCPU/numPm*Constants.maxCPU)*100);
-		utilisation += 100-((sumMEM/numPm*Constants.maxMEM)*100);
-		utilisation += 100-((sumNET/numPm*Constants.maxNET)*100);
-		utilisation += 100-((sumDISK/numPm*Constants.maxDISK)*100);
-		utilisation = utilisation/4;
+		double utilisation = 100.0 - ((sumCPU/(numPm*Constants.maxCPU))*100.0);
+		utilisation += 100.0 - ((sumMEM/(numPm*Constants.maxMEM))*100.0);
+		utilisation += 100.0 - ((sumNET/(numPm*Constants.maxNET))*100.0);
+		utilisation += 100.0 -((sumDISK/(numPm*Constants.maxDISK))*100.0);
+		utilisation = utilisation/4.0;
 		return utilisation;
 	}
 
@@ -175,6 +205,7 @@ public class NaiveSimulator {
 					try {
 						m.addApplication(app);
 						assigned = true;
+						break;
 					} catch (ResourceAllocationException e1) {
 						System.err.println("there are avaiable resource but app cannot fit to machine");
 					}

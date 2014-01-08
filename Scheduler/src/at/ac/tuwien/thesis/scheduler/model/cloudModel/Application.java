@@ -47,5 +47,11 @@ public class Application {
 	public Double getActualNET(){
 		return this.netList.get(pointer);
 	}
+	public String getName(){
+		return name;
+	}
+	public String toString(){
+		return name;
+	}
 	
 }
