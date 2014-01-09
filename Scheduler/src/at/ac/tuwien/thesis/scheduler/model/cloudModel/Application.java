@@ -53,5 +53,8 @@ public class Application {
 	public String toString(){
 		return name;
 	}
+	public int size(){
+		return this.cpuList.size();
+	}
 	
 }

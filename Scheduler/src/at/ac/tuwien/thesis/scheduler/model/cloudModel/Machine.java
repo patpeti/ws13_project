@@ -93,7 +93,7 @@ public class Machine {
 		this.cpu += cpu ;
 		if(this.cpu > maxCPU){
 			this.cpu -=cpu;
-			throw new ResourceAllocationException();
+			throw new ResourceAllocationException("cpu full");
 		}
 	}
 
@@ -101,7 +101,7 @@ public class Machine {
 		this.net += net ;
 		if(this.net > maxNET){
 			this.net -=net;
-			throw new ResourceAllocationException();
+			throw new ResourceAllocationException("net full");
 		}
 	}
 	
@@ -109,7 +109,7 @@ public class Machine {
 		this.disk += disk ;
 		if(this.disk > maxDISK){
 			this.disk -=disk;
-			throw new ResourceAllocationException();
+			throw new ResourceAllocationException("disk full");
 		}
 	}
 	
@@ -117,7 +117,7 @@ public class Machine {
 		this.mem += mem;
 		if(this.mem > maxMEM){
 			this.mem -=mem;
-			throw new ResourceAllocationException();
+			throw new ResourceAllocationException("mem full");
 		}
 	}
 	
@@ -158,11 +158,9 @@ public class Machine {
 		for(Application app : temp){
 			//increase pointer
 			app.increasePointer();
-			
 			try {
 				this.addApplication(app);
 			} catch (ResourceAllocationException e) {
-				System.out.println("reschedule needed");
 				System.out.println(e.getErrorMsg());
 				toReschedule.add(app);
 			}

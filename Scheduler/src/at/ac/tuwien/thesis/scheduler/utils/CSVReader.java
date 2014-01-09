@@ -55,7 +55,7 @@ public class CSVReader {
 				if (br != null) {
 					try {
 						br.close();
-						System.out.println("File Reading finished.");
+						System.out.print(".");
 					} catch (IOException e) {
 						e.printStackTrace();
 					}

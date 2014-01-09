@@ -2,12 +2,9 @@ package at.ac.tuwien.thesis.scheduler.controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JPanel;
 
 import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 import at.ac.tuwien.thesis.scheduler.gui.ForecastPanel;
@@ -51,15 +48,9 @@ public class ForecastController implements ActionListener{
 				cb4.setSelectedItem(selection);
 			}
 		}
-		
-		
 	}
 
-	
-
 	private void ShowForecast() {
-		
-	
 		
 		this.inputcontroller.getMainWindow().getForecastPanel().removeAll();
 		ChartController cs = this.inputcontroller.getChartController();
@@ -77,7 +68,6 @@ public class ForecastController implements ActionListener{
 
 	public void setData(TimeSeriesModel tsModel) {
 		this.tsModel = tsModel;
-		
 	}
 
 }

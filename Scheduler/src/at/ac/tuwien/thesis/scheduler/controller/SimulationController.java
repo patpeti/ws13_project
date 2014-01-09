@@ -25,7 +25,6 @@ public class SimulationController implements ActionListener{
 	
 	public void setData(TimeSeriesModel tsModel) {
 		this.tsModel = tsModel;
-		
 	}
 
 	@Override

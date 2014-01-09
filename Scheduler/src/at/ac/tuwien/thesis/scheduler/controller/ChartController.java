@@ -43,9 +43,9 @@ public class ChartController {
 
 		chart.setBackgroundPaint(Color.white);
 		XYPlot plot = (XYPlot) chart.getPlot();
-		plot.setBackgroundPaint(Color.lightGray);
-		plot.setDomainGridlinePaint(Color.white);
-		plot.setRangeGridlinePaint(Color.white);
+		plot.setBackgroundPaint(Color.white);
+		plot.setDomainGridlinePaint(Color.lightGray);
+		plot.setRangeGridlinePaint(Color.lightGray);
 		plot.setAxisOffset(new RectangleInsets(2.0, 2.0, 2.0, 2.0));
 		plot.setDomainCrosshairVisible(true);
 		plot.setRangeCrosshairVisible(true);
@@ -88,6 +88,15 @@ public class ChartController {
 	
 	public JPanel createChart(String dim){
 		JFreeChart chart = createChart(createDataset(dim),dim);
+		if(dim.equals("CPU")) {
+			chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.MAGENTA);
+		}else if(dim.equals("NET")){
+			chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.ORANGE);
+		}else if(dim.equals("DISK")){
+			chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.BLUE);
+		}else{
+			chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.GREEN);
+		}
 		ChartPanel panel = new ChartPanel(chart);
 		panel.setFillZoomRectangle(true);
 		panel.setMouseWheelEnabled(true);
@@ -96,8 +105,7 @@ public class ChartController {
 	
 	public JPanel createForecast(String dim, ForecastType forecastType, Integer dr_factor){
 		JFreeChart chart = createChart(createForecastData(dim,forecastType,dr_factor),dim);
-		//TODO enable this
-		chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.BLUE);
+		chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.RED);
 		ChartPanel panel = new ChartPanel(chart);
 		panel.setFillZoomRectangle(true);
 		panel.setMouseWheelEnabled(true);

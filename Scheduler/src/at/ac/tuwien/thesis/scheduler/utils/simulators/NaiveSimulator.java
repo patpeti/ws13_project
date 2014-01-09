@@ -34,6 +34,7 @@ public class NaiveSimulator {
 	List<Application> appList;
 	List<Machine> pmList;
 	int splitLength;
+	int dataLength;
 	
 	
 	List<Double> utilisationLog;
@@ -52,13 +53,8 @@ public class NaiveSimulator {
 		
 		//split tsModel
 		splitModel(split);
-		
-		//init PMs/ fill them
-		
 		//create list of applications
-		
 		for(String key : splittedModel2.getTsModel().keySet()){
-			
 			List<Double> cpuSeries = splittedModel2.getTsForName(key).getDimension("CPU");
 			List<Double> memSeries = splittedModel2.getTsForName(key).getDimension("MEM");
 			List<Double> diskSeries = splittedModel2.getTsForName(key).getDimension("DISK");
@@ -66,52 +62,33 @@ public class NaiveSimulator {
 			Application app = new Application(cpuSeries, memSeries, diskSeries, netSeries, key);
 			appList.add(app);
 		}
-		System.out.println("Creating Apps Finished : "+ appList.size());
-		
 		//start assign it to list of machines
-
 		for(Application app : appList){
 				addToPM(app);
-			
 		}
-		
+		System.out.println("Apps Data Size: "+appList.get(0).size());
+		System.out.println("Splitlength: " + splitLength);
 		//once we have the initial state, start iterating from i = 0 to splitlength
 		//iterate over values -> let PMs adapt changes -> count overall resource utilisation, num of app relocation, SLO violation
 		
-		for(int i = 0; i < splitLength-1; i++){
-			System.out.println("Iteration: "+i);
-			
-				
+		for(int i = 0; i < (dataLength-splitLength)-1; i++){
+//			System.out.println("Iteration: "+i);
 			//set Application pointer++ for each application in each machine
 			List<Application> reschedule = new ArrayList<Application>();
 			for(Machine m : pmList){
 				//if ressourceallocationexcption occurs remove app -> assing to reschedule liste
 				//try assign reschedule list to existing PM-s
-//				System.out.print(" utilisation Before: "+ m.getUtilization());
 				reschedule.addAll(m.iterate());
-//				System.out.print(" utilisation After: "+ m.getUtilization());
 				numReschedules += reschedule.size();
-//				System.out.println(" toreschedule: " + reschedule.size());
 			}
 			//assign them to new PM
 			if(!reschedule.isEmpty()){
 				for(Application app : reschedule){
-					System.out.println("rescheduling");
+//					System.out.println("rescheduling");
 					addToPM(app);
 				}
 			}
-		
-//			for(Machine m : pmList){
-//				for(Application app : m.getApps()){
-//					System.out.print(app.getName() + " " + app.getPointer() + " ");
-//				}
-//				
-//				System.out.println("");
-//			}
-			
 			//CONSOLIDATION
-			//calculate utilization
-		
 			utilisationLog.add(i,calculateUtilization());
 			try{
 				//if utilization is low(er) try to migrate one PM-s apps to other PMs
@@ -149,7 +126,6 @@ public class NaiveSimulator {
 									break;
 								} catch (ResourceAllocationException e1) {
 									System.err.println("FATAL ERROR there are avaiable resource but app cannot fit to machine2");
-									
 								}
 							}
 						}
@@ -163,29 +139,20 @@ public class NaiveSimulator {
 							}
 						}
 						pmList.add(lowest);
-						System.out.println("rollback");
 					}else if(rescheduled == tryReschedule.size()){
 						numReschedules += rescheduled;
 						System.out.println("rescheduling success");
 					}else{
 						System.err.println("wtf");
 					}
-					
+
 					numPMLog.add(pmList.size());
-					
-					
 				}
 			}catch(IndexOutOfBoundsException exception){
-					System.out.println("First step ... Do nothing");
-				}
-
-//			System.out.println("Pms: \t utilisation: \t reschedules: \t");
-//			System.out.println(pmList.size()+"\t" + utilisationLog.get(i) + " \t "+ numReschedules);
-			
-			
+				System.out.println("First step ... Do nothing");
+			}
 		}
-		
-		
+		//OUTPUT
 		System.out.println("Number of reschedules: " + numReschedules);
 		
 //		List<Integer> numPMLog;
@@ -225,9 +192,9 @@ public class NaiveSimulator {
 
 		chart.setBackgroundPaint(Color.white);
 		XYPlot plot = (XYPlot) chart.getPlot();
-		plot.setBackgroundPaint(Color.lightGray);
-		plot.setDomainGridlinePaint(Color.white);
-		plot.setRangeGridlinePaint(Color.white);
+		plot.setBackgroundPaint(Color.white);
+		plot.setDomainGridlinePaint(Color.lightGray);
+		plot.setRangeGridlinePaint(Color.lightGray);
 		plot.setAxisOffset(new RectangleInsets(2.0, 2.0, 2.0, 2.0));
 		plot.setDomainCrosshairVisible(true);
 		plot.setRangeCrosshairVisible(true);
@@ -240,7 +207,6 @@ public class NaiveSimulator {
 			renderer.setDrawSeriesLineAsPath(true);
 			
 		}
-
 		return chart;
 
 	}
@@ -291,11 +257,10 @@ public class NaiveSimulator {
 				System.err.println("new empty machine has not enough capacity to host this app - increase Machine size in Constants");
 			}
 		}
-
 	}
 
 	private void splitModel(Integer split) {
-		int dataLength = tsModel.getTsForName("1.csv").getTs().get("CPU").size(); //TODO do not take fixed "1.csv"
+		dataLength = tsModel.getTsForName("1.csv").getTs().get("CPU").size(); //TODO do not take fixed "1.csv"
 		splitLength = dataLength * split/100;
 
 		splittedModel1 = new TimeSeriesModel();
@@ -324,10 +289,9 @@ public class NaiveSimulator {
 			splittedModel2.addNewTimeSeries(key,tsHolder2 );
 		}
 		
-		
 		System.out.println("Splitting finished");
-		System.out.println("I. Split length: " + splittedModel2.getTsForName("4.csv").getDimension("CPU").size());
-		System.out.println("II. Split length: " + splittedModel1.getTsForName("4.csv").getDimension("CPU").size());
+		System.out.println("I. Split length: " + splittedModel1.getTsForName("4.csv").getDimension("CPU").size());
+		System.out.println("II. Split length: " + splittedModel2.getTsForName("4.csv").getDimension("CPU").size());
 		
 	}
 
