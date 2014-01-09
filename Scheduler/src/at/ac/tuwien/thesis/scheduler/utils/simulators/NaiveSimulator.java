@@ -146,33 +146,40 @@ public class NaiveSimulator {
 						System.err.println("wtf");
 					}
 
-					numPMLog.add(pmList.size());
 				}
 			}catch(IndexOutOfBoundsException exception){
 				System.out.println("First step ... Do nothing");
 			}
+			numPMLog.add(pmList.size());
 		}
 		//OUTPUT
 		System.out.println("Number of reschedules: " + numReschedules);
 		
-//		List<Integer> numPMLog;
-
 		XYSeries s1 = new XYSeries("utilisation");
-		int i=1;
+		XYSeries s2 = new XYSeries("Machines");
+		int i=0;
 		for(Double value : utilisationLog){
 			s1.add(i,value);
+			s2.add(i,numPMLog.get(i));
 			i++;
 		}
 		XYSeriesCollection dataset = new XYSeriesCollection();
 		dataset.addSeries(s1);
+		dataset.addSeries(s2);
 
-		JFreeChart chart = createChart(dataset, "utilisation");
+		JFreeChart chart = createChart(dataset, "utilisation-pms");
+		chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.RED);
+		chart.getXYPlot().getRenderer().setSeriesPaint(1, Color.BLUE);
 		ChartPanel panel = new ChartPanel(chart);
 		
 		JFrame frame = new JFrame();
-		frame.setSize(300, 200);
+		frame.setSize(400, 300);
 		frame.setContentPane(panel);
 		frame.setVisible(true);
+		
+		System.out.println("AVG number of Machines: "+ calculateMean2(numPMLog));
+		System.out.println("AVG Overall Utilization: "+ calculateMean(utilisationLog));
+		
 		
 	}
 	
@@ -293,6 +300,26 @@ public class NaiveSimulator {
 		System.out.println("I. Split length: " + splittedModel1.getTsForName("4.csv").getDimension("CPU").size());
 		System.out.println("II. Split length: " + splittedModel2.getTsForName("4.csv").getDimension("CPU").size());
 		
+	}
+	
+	private Double calculateMean(List<Double> temp) {
+		Double sum = new Double(0);
+		int num = 0;
+		for(Double d : temp){
+			sum += d;
+			num++;
+		}
+		return (new Double(sum) / new Double(num));
+	}
+	
+	private Double calculateMean2(List<Integer> temp) {
+		Double sum = new Double(0);
+		int num = 0;
+		for(Integer d : temp){
+			sum += d;
+			num++;
+		}
+		return (new Double(sum) / new Double(num));
 	}
 
 }
