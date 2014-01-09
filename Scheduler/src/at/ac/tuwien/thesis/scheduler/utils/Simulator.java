@@ -1,12 +1,18 @@
 package at.ac.tuwien.thesis.scheduler.utils;
 
+import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 import at.ac.tuwien.thesis.scheduler.enums.SimType;
 import at.ac.tuwien.thesis.scheduler.model.TimeSeriesModel;
+import at.ac.tuwien.thesis.scheduler.utils.simulators.LongTermSimulator;
 import at.ac.tuwien.thesis.scheduler.utils.simulators.NaiveSimulator;
 
 public class Simulator {
 	
 	private TimeSeriesModel tsModel;
+	private ForecastType diskForecast;
+	private ForecastType netForecast;
+	private ForecastType memForecast;
+	private ForecastType cpuForecast;
 	
 	public Simulator(TimeSeriesModel tsModel) {
 		this.tsModel = tsModel;
@@ -19,11 +25,24 @@ public class Simulator {
 			NaiveSimulator naive = new NaiveSimulator(tsModel);
 			naive.simulate(confidence,split,dimRed);
 			
-		}else{
-			//todo
+		}else if(type.equals(SimType.LONGTERM)){
+
+			LongTermSimulator longterm = new LongTermSimulator(tsModel);
+			longterm.setForecastTypes(cpuForecast,netForecast,memForecast,diskForecast);
+			longterm.simulate(confidence,split,dimRed);
 			
 		}
 		
+	}
+
+	public void setForecastTypes(ForecastType cpuForecast,
+			ForecastType netForecast, ForecastType memForecast,
+			ForecastType diskForecast) {
+		this.cpuForecast = cpuForecast;
+		this.memForecast = memForecast;
+		this.netForecast = netForecast;
+		this.diskForecast = diskForecast;
+
 	}
 
 }

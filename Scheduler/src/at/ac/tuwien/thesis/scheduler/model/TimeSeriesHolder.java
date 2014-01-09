@@ -15,7 +15,7 @@ public class TimeSeriesHolder {
 		
 	}
 	
-	public void AddSeries(String dimensionName, ArrayList<Double> series){
+	public void AddSeries(String dimensionName, List<Double> series){
 		this.ts.put(dimensionName, series);
 	}
 	

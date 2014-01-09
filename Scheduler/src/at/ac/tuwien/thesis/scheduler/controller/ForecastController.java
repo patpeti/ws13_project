@@ -69,5 +69,9 @@ public class ForecastController implements ActionListener{
 	public void setData(TimeSeriesModel tsModel) {
 		this.tsModel = tsModel;
 	}
+	
+	public ForecastPanel getView(){
+		return this.view;
+	}
 
 }

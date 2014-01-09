@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 
+import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 import at.ac.tuwien.thesis.scheduler.gui.SimulationPanel;
 import at.ac.tuwien.thesis.scheduler.model.TimeSeriesModel;
 import at.ac.tuwien.thesis.scheduler.utils.Simulator;
@@ -46,7 +47,15 @@ public class SimulationController implements ActionListener{
 		System.out.println("ConfidenceLevel: "+view.getConfidenceLevel());
 		System.out.println("SimType: "+view.getSimulationType());
 		
+		
+		
+		ForecastType cpuForecast = (ForecastType) inputcontroller.getSettingsController().getView().getComboBox().getSelectedItem();
+		ForecastType netForecast = (ForecastType) inputcontroller.getSettingsController().getView().getComboBox1().getSelectedItem();
+		ForecastType memForecast = (ForecastType) inputcontroller.getSettingsController().getView().getComboBox2().getSelectedItem();
+		ForecastType diskForecast = (ForecastType) inputcontroller.getSettingsController().getView().getComboBox3().getSelectedItem();
+		
 		Simulator sim = new Simulator(tsModel);
+		sim.setForecastTypes(cpuForecast,netForecast,memForecast,diskForecast);
 		sim.startSimulation(view.getSimulationType(), view.getConfidenceLevel(), view.getTestTrainSplit(), view.getDimReductionFactor());
 
 	}
