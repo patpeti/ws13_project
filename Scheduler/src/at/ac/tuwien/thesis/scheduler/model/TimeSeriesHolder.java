@@ -12,10 +12,10 @@ public class TimeSeriesHolder {
 	public TimeSeriesHolder(){
 		List<Double> series = new ArrayList<Double>();
 		ts = new HashMap<String,List<Double>>();
-		
 	}
 	
 	public void AddSeries(String dimensionName, List<Double> series){
+		
 		this.ts.put(dimensionName, series);
 	}
 	

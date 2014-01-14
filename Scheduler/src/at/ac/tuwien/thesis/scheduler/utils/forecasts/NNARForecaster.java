@@ -48,12 +48,17 @@ public class NNARForecaster {
 			
 			double [] forecastArray = new double[horizon];
 			List<Double> forecastListe = new ArrayList<Double>();
-			
+			int P;
+			if (dataSize <= Constants.DataPerWeek){
+				P = 6;
+			}else{
+				P = 12;
+			}
 			try {
 				REXP x;
 				re.assign("x", reducedArray);
 				re.eval("x1 <- data.frame(x)");
-				re.eval("x2 <- nnetar(ts(x1,start=0,frequency="+frequency+")[,1],P=6)");
+				re.eval("x2 <- nnetar(ts(x1,start=0,frequency="+frequency+")[,1],P="+P+")");
 				re.eval("x3 <- data.frame(forecast(x2,h="+horizon+"))");
 				re.eval("x4 <- x3[,1]");
 				System.out.println(x=re.eval("x4"));
