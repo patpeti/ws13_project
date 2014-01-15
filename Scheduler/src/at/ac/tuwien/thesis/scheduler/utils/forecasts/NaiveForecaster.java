@@ -11,9 +11,10 @@ public class NaiveForecaster {
 
 	/**
 	 * *Forecast is the same as the input
+	 * @param horizon 
 	 */
 	
-	public List<Double> forecast(List<Double> valueList, Integer dr_factor) {
+	public List<Double> forecast(List<Double> valueList, Integer dr_factor, Integer horizon) {
 		
 		DimReductionStrategy dimreduction = new DimReductionStrategy(DimReductionStrategyType.AVG);
 		List<Double> reduced = dimreduction.dimReduce(valueList,dr_factor);

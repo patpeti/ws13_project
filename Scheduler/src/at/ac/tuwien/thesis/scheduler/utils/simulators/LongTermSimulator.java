@@ -67,10 +67,10 @@ public class LongTermSimulator {
 			tsHolder.addDimension("MEM");
 			tsHolder.addDimension("DISK");
 			tsHolder.addDimension("NET");
-			List<Double> cpuForecastListe = forecaster.calculateForecast(cpuSeries, cpuForecast, dimRed);
-			List<Double> memForecastListe = forecaster.calculateForecast(memSeries, memForecast, dimRed);
-			List<Double> diskForecastListe = forecaster.calculateForecast(diskSeries, diskForecast, dimRed);
-			List<Double> netForecastListe = forecaster.calculateForecast(netSeries, netForecast, dimRed);
+			List<Double> cpuForecastListe = forecaster.calculateForecast(cpuSeries, cpuForecast, dimRed,null);
+			List<Double> memForecastListe = forecaster.calculateForecast(memSeries, memForecast, dimRed,null);
+			List<Double> diskForecastListe = forecaster.calculateForecast(diskSeries, diskForecast, dimRed,null);
+			List<Double> netForecastListe = forecaster.calculateForecast(netSeries, netForecast, dimRed,null);
 
 			tsHolder.AddSeries("CPU", cpuForecastListe);
 			tsHolder.AddSeries("MEM", memForecastListe);

@@ -6,7 +6,7 @@ import java.util.List;
 public class MeanForecaster {
 
 	
-	public List<Double> forecast(List<Double> valueList, Integer dr_factor) {
+	public List<Double> forecast(List<Double> valueList, Integer dr_factor, Integer horizon) {
 		
 		Double mean = this.calculateMean(valueList);
 		

@@ -6,7 +6,7 @@ import java.util.List;
 public class MaxForecaster {
 
 	
-	public List<Double> forecast(List<Double> valueList, Integer dr_factor) {
+	public List<Double> forecast(List<Double> valueList, Integer dr_factor, Integer horizon) {
 		
 		Double max = this.calculateMax(valueList);
 		List<Double> interpolated = new ArrayList<Double>();

@@ -18,25 +18,24 @@ public class DECOMPForecaster {
 	private Integer dataSize;
 	private Integer dr_factor;
 
-	public List<Double> forecast(List<Double> valueList, Integer dr_factor) {
+	public List<Double> forecast(List<Double> valueList, Integer dr_factor, Integer horizon) {
 		this.dataSize = valueList.size();
 		this.dr_factor = dr_factor;
 		DimReductionStrategy dimreduction = new DimReductionStrategy(DimReductionStrategyType.AVG);
 		List<Double> reduced = dimreduction.dimReduce(valueList,dr_factor);
-		
-		List<Double> forecasted = this.decomp(reduced);
+		if(horizon == null) horizon = (int) Math.ceil(Constants.DataPerWeek/dr_factor);
+		List<Double> forecasted = this.decomp(reduced, horizon);
 		
 		InterpolationStrategy interpolation = new InterpolationStrategy(InterpolationStrategyType.PAA);
 		List<Double> interpolated = interpolation.interPolate(forecasted,dr_factor);
 		return interpolated;
 	}
 
-	private List<Double> decomp(List<Double> reduced) {
+	private List<Double> decomp(List<Double> reduced, Integer horizon) {
 		
 			Rengine re= REngineSingleton.getREngine();
 		
 			Integer frequency = Constants.DataPerDay/dr_factor;
-			Integer horizon = (int) Math.ceil(Constants.DataPerWeek/dr_factor);
 			Integer reducedSize = (int) Math.ceil(dataSize/dr_factor);
 			System.out.println("***********  DEBUG OUTPUT  ***********");
 			System.out.println(" frequency: "+ frequency + " horizon: "+ horizon + " reducedSize: "+ reducedSize);

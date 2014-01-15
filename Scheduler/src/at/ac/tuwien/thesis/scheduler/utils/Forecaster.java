@@ -15,34 +15,34 @@ import at.ac.tuwien.thesis.scheduler.utils.forecasts.TBATSForecaster;
 
 public class Forecaster {
 
-	public List<Double> calculateForecast(List<Double> valueList,ForecastType forecastType, Integer dr_factor) {
+	public List<Double> calculateForecast(List<Double> valueList,ForecastType forecastType, Integer dr_factor, Integer horizon) {
 		if(forecastType.equals(ForecastType.NAIVE)){
 			NaiveForecaster naive = new NaiveForecaster();
-			return naive.forecast(valueList,dr_factor);
+			return naive.forecast(valueList,dr_factor,horizon);
 		}else if(forecastType.equals(ForecastType.NNAR)){
 			NNARForecaster nnar = new NNARForecaster();
-			return nnar.forecast(valueList,dr_factor);
+			return nnar.forecast(valueList,dr_factor,horizon);
 		}else if(forecastType.equals(ForecastType.MEAN)){
 			MeanForecaster mean = new MeanForecaster();
-			return mean.forecast(valueList, dr_factor);
+			return mean.forecast(valueList, dr_factor,horizon);
 		}else if(forecastType.equals(ForecastType.MAX)){
 			MaxForecaster max = new MaxForecaster();
-			return max.forecast(valueList, dr_factor);
+			return max.forecast(valueList, dr_factor,horizon);
 		}else if(forecastType.equals(ForecastType.DECOMP)){
 			DECOMPForecaster dec = new DECOMPForecaster();
-			return dec.forecast(valueList, dr_factor);
+			return dec.forecast(valueList, dr_factor,horizon);
 		}else if(forecastType.equals(ForecastType.HW)){
 			HWForecaster hw = new HWForecaster();
-			return hw.forecast(valueList, dr_factor);
+			return hw.forecast(valueList, dr_factor,horizon);
 		}else if(forecastType.equals(ForecastType.TBATS)){
 			TBATSForecaster tbats = new TBATSForecaster();
-			return tbats.forecast(valueList, dr_factor);
+			return tbats.forecast(valueList, dr_factor,horizon);
 		}else if(forecastType.equals(ForecastType.FOURIER)){
 			FourierForecaster fourier = new FourierForecaster();
-			return fourier.forecast(valueList, dr_factor);
+			return fourier.forecast(valueList, dr_factor,horizon);
 		}else if(forecastType.equals(ForecastType.DSHW)){
 			DSHWForecaster dswh = new DSHWForecaster();
-			return dswh.forecast(valueList, dr_factor);
+			return dswh.forecast(valueList, dr_factor, horizon);
 		}else{
 			return null;
 		}

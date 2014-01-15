@@ -114,7 +114,7 @@ public class ChartController {
 
 	private XYDataset createForecastData(String dim, ForecastType forecastType, Integer dr_factor) {
 		Forecaster f = new Forecaster();
-		List<Double> values = f.calculateForecast(tsHolder.getDimension(dim),forecastType,dr_factor);
+		List<Double> values = f.calculateForecast(tsHolder.getDimension(dim),forecastType,dr_factor,null);
 		if(values == null) return null;
 		XYSeries s1 = new XYSeries(dim);
 		int i = tsHolder.getDimension(dim).size();
