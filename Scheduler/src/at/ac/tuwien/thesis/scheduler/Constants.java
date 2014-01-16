@@ -2,8 +2,9 @@ package at.ac.tuwien.thesis.scheduler;
 
 public class Constants {
 
-	public static final Integer DataPerDay = 1440;
-	public static final Integer DataPerWeek = 10080;
+	public static  Integer DataPerDay = 1440;
+	public static  Integer DataPerWeek = DataPerDay*7;
+	public static  Integer Horizon = DataPerWeek;
 	
 	public static final Integer maxCPU = 90*3;
 	public static final Integer maxNET = 7000*3;

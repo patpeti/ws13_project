@@ -12,7 +12,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import at.ac.tuwien.thesis.scheduler.Constants;
 import at.ac.tuwien.thesis.scheduler.controller.SimulationController;
 import at.ac.tuwien.thesis.scheduler.enums.DimReductionSelectionType;
 import at.ac.tuwien.thesis.scheduler.enums.SimType;
@@ -22,7 +25,7 @@ public class SimulationPanel {
 	private SimulationController sc;
 	private JComboBox comboBox;
 	private JComboBox comboBox_dimred;
-	private JSpinner spinner,spinner2;
+	private JSpinner spinner,spinner2,spinner3,spinner4;
 
 	public SimulationPanel(SimulationController simController){
 		this.sc = simController;
@@ -51,6 +54,12 @@ public class SimulationPanel {
 		JLabel label4 = new JLabel("Dim Reduction");
 		label4.setBorder(new EmptyBorder(0, 0, 10, 0));
 		left.add(label4);
+		JLabel label5 = new JLabel("DataPerDay");
+		label5.setBorder(new EmptyBorder(0, 0, 10, 0));
+		left.add(label5);
+		JLabel label6 = new JLabel("Horizon");
+		label6.setBorder(new EmptyBorder(0, 0, 10, 0));
+		left.add(label6);
 		
 		
 		JPanel right = new JPanel();
@@ -73,6 +82,30 @@ public class SimulationPanel {
 		right.add(comboBox_dimred);
 		comboBox_dimred.setModel(new DefaultComboBoxModel(DimReductionSelectionType.values()));
 		
+		spinner3 = new JSpinner();
+		spinner3.setValue(new Integer(Constants.DataPerDay));
+		right.add(spinner3);
+		
+		
+		spinner4 = new JSpinner();
+		spinner4.setValue(new Integer(Constants.Horizon));
+		right.add(spinner4);
+		
+		spinner3.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				Constants.DataPerDay = (Integer) spinner3.getValue();
+				System.out.println("changed " + Constants.DataPerDay);
+			}
+		});
+		
+		spinner4.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent e) {
+				Constants.Horizon = (Integer) spinner4.getValue();
+				System.out.println("changed " + Constants.Horizon);
+			}
+		});
 		
 		JButton simStart = new JButton("Start Simulaion");
 		simStart.addActionListener(sc);
