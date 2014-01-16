@@ -1,5 +1,6 @@
 package at.ac.tuwien.thesis.scheduler.utils.forecasts;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import at.ac.tuwien.thesis.scheduler.enums.DimReductionStrategyType;
@@ -15,18 +16,27 @@ public class NaiveForecaster {
 	 */
 	
 	public List<Double> forecast(List<Double> valueList, Integer dr_factor, Integer horizon) {
-		
+		int i = 0;
+		List<Double> limitedListe = new ArrayList<>();
+		for(Double d : valueList){
+			if(i < horizon){
+				limitedListe.add(d);
+			}
+
+			i++;
+		}
+
 		DimReductionStrategy dimreduction = new DimReductionStrategy(DimReductionStrategyType.AVG);
-		List<Double> reduced = dimreduction.dimReduce(valueList,dr_factor);
-		
+		List<Double> reduced = dimreduction.dimReduce(limitedListe,dr_factor);
+
 		InterpolationStrategy interpolation = new InterpolationStrategy(InterpolationStrategyType.PAA);
-//		InterpolationStrategy interpolation = new InterpolationStrategy(InterpolationStrategyType.PLA);
+		//		InterpolationStrategy interpolation = new InterpolationStrategy(InterpolationStrategyType.PLA);
 		List<Double> interpolated = interpolation.interPolate(reduced,dr_factor);
 		return interpolated;
 	}
 
-	
-	
+
+
 
 	
 

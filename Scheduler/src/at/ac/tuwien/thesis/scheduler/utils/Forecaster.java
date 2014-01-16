@@ -2,6 +2,7 @@ package at.ac.tuwien.thesis.scheduler.utils;
 
 import java.util.List;
 
+import at.ac.tuwien.thesis.scheduler.Constants;
 import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.DECOMPForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.DSHWForecaster;
@@ -16,6 +17,11 @@ import at.ac.tuwien.thesis.scheduler.utils.forecasts.TBATSForecaster;
 public class Forecaster {
 
 	public List<Double> calculateForecast(List<Double> valueList,ForecastType forecastType, Integer dr_factor, Integer horizon) {
+		
+		if(horizon == null){
+			horizon = Constants.Horizon;
+		}
+		
 		if(forecastType.equals(ForecastType.NAIVE)){
 			NaiveForecaster naive = new NaiveForecaster();
 			return naive.forecast(valueList,dr_factor,horizon);

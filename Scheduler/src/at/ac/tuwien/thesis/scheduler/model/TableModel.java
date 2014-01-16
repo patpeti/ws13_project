@@ -22,7 +22,8 @@ public class TableModel  extends AbstractTableModel implements ITableModel{
 		if(tsMap == null){
 			return 1;
 		}else{
-			return tsMap.get("TIMESTAMP").size(); //TODO this is not really elegant
+			
+			return tsMap.get(tsMap.keySet().iterator().next()).size(); //TODO this is not really elegant
 		}
 //		return data.size();
 	}

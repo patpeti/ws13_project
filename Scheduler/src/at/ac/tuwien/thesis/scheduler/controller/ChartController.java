@@ -67,6 +67,7 @@ public class ChartController {
 
 
 		List<Double> valueListe = tsHolder.getDimension(dim);
+		if(valueListe == null || valueListe.isEmpty()) return null;
 
 		XYSeries s1 = new XYSeries(dim);
 		int i=1;
