@@ -8,6 +8,7 @@ import at.ac.tuwien.thesis.scheduler.utils.forecasts.DECOMPForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.DSHWForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.FourierForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.HWForecaster;
+import at.ac.tuwien.thesis.scheduler.utils.forecasts.HourlyDSHWForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.MaxForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.MeanForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.NNARForecaster;
@@ -20,6 +21,7 @@ public class Forecaster {
 		
 		if(horizon == null){
 			horizon = Constants.Horizon;
+			horizon = (int) Math.ceil(Constants.Horizon/dr_factor);
 		}
 		
 		if(forecastType.equals(ForecastType.NAIVE)){
@@ -49,6 +51,9 @@ public class Forecaster {
 		}else if(forecastType.equals(ForecastType.DSHW)){
 			DSHWForecaster dswh = new DSHWForecaster();
 			return dswh.forecast(valueList, dr_factor, horizon);
+		}else if(forecastType.equals(ForecastType.HOURLYDSWH)){
+				HourlyDSHWForecaster dswh = new HourlyDSHWForecaster();
+				return dswh.forecast(valueList, dr_factor, horizon);
 		}else{
 			return null;
 		}

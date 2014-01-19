@@ -176,6 +176,26 @@ public class Machine {
 		utilisation = utilisation/4;
 		return utilisation;
 	}
+	
+	public double getForecastedUtilization(int step){
+		//TODO
+		return 0;
+	}
+	
+	public double getForecastedAvailableRAM(int step){
+		return 0;
+	}
+	
+	public double getForecastedAvailableCPU(int step){
+		return 0;
+	}
+	public double getForecastedAvailableMEM(int step){
+		return 0;
+	}
+	public double getForecastedAvailableDISK(int step){
+		return 0;
+	}
+	
 
 
 	

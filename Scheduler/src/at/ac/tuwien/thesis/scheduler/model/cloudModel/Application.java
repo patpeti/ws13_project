@@ -9,6 +9,10 @@ public class Application {
 	List<Double> memList;
 	List<Double> diskList;
 	List<Double> netList;
+	List<Double> forecastedCpuList;
+	List<Double> forecastedMemList;
+	List<Double> forecastedDiskList;
+	List<Double> forecastedNetList;
 	int pointer = 0;
 
 	
@@ -55,6 +59,24 @@ public class Application {
 	}
 	public int size(){
 		return this.cpuList.size();
+	}
+
+	public void setForecastedCPU(List<Double> dimension) {
+		this.forecastedCpuList = dimension;
+		
+	}
+	
+	public void setForecastedMEM(List<Double> dimension) {
+		this.forecastedMemList = dimension;
+		
+	}
+	public void setForecastedDISK(List<Double> dimension) {
+		this.forecastedDiskList = dimension;
+		
+	}
+	public void setForecastedNET(List<Double> dimension) {
+		this.forecastedNetList = dimension;
+		
 	}
 	
 }

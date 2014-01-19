@@ -88,6 +88,12 @@ public class LongTermSimulator {
 			List<Double> diskSeries = splittedModel2.getTsForName(key).getDimension("DISK");
 			List<Double> netSeries = splittedModel2.getTsForName(key).getDimension("NET");
 			Application app = new Application(cpuSeries, memSeries, diskSeries, netSeries, key);
+			
+			app.setForecastedCPU(forecast.getTsForName(key).getDimension("CPU"));
+			app.setForecastedMEM(forecast.getTsForName(key).getDimension("MEM"));
+			app.setForecastedDISK(forecast.getTsForName(key).getDimension("DISK"));
+			app.setForecastedNET(forecast.getTsForName(key).getDimension("NET"));
+			
 			appList.add(app);
 		}
 		//start assign it to list of machines

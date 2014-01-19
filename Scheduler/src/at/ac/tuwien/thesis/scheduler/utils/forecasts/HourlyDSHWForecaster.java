@@ -13,7 +13,7 @@ import at.ac.tuwien.thesis.scheduler.utils.forecasts.rutil.REngineSingleton;
 import at.ac.tuwien.thesis.scheduler.utils.tsutils.DimReductionStrategy;
 import at.ac.tuwien.thesis.scheduler.utils.tsutils.InterpolationStrategy;
 
-public class NNARForecaster {
+public class HourlyDSHWForecaster {
 	
 	private Integer dataSize;
 	private Integer dr_factor;
@@ -23,20 +23,19 @@ public class NNARForecaster {
 		this.dr_factor = dr_factor;
 		DimReductionStrategy dimreduction = new DimReductionStrategy(DimReductionStrategyType.AVG);
 		List<Double> reduced = dimreduction.dimReduce(valueList,dr_factor);
-		if(horizon == null) horizon = (int) Math.ceil(Constants.DataPerWeek/dr_factor);
-		List<Double> forecasted = this.nnar(reduced,horizon);
+		if(horizon == null) horizon = Constants.DataPerWeek/dr_factor;
+		List<Double> forecasted = this.hw(reduced, horizon);
 		
 		InterpolationStrategy interpolation = new InterpolationStrategy(InterpolationStrategyType.PAA);
 		List<Double> interpolated = interpolation.interPolate(forecasted,dr_factor);
 		return interpolated;
 	}
 
-	private List<Double> nnar(List<Double> reduced, Integer horizon) {
+	private List<Double> hw(List<Double> reduced, Integer horizon) {
 		
 			Rengine re= REngineSingleton.getREngine();
 		
 			Integer frequency = Constants.DataPerDay/dr_factor;
-			
 			Integer reducedSize = (int) Math.ceil(dataSize/dr_factor);
 			System.out.println("***********  DEBUG OUTPUT  ***********");
 			System.out.println(" frequency: "+ frequency + " horizon: "+ horizon + " reducedSize: "+ reducedSize);
@@ -48,22 +47,19 @@ public class NNARForecaster {
 			
 			double [] forecastArray = new double[horizon];
 			List<Double> forecastListe = new ArrayList<Double>();
-			int P;
-			if (dataSize <= Constants.DataPerWeek){
-				P = 2;
-			}else{
-				P = 12;
-			}
+			
 			try {
 				REXP x;
 				re.assign("x", reducedArray);
-				re.eval("x1 <- data.frame(x)");
-				re.eval("x2 <- nnetar(ts(x1,start=0,frequency="+frequency+")[,1],P="+P+")");
-				re.eval("x3 <- data.frame(forecast(x2,h="+horizon+"))");
-				re.eval("x4 <- x3[,1]");
-				System.out.println(x=re.eval("x4"));
-				System.out.println("ME \t    RMSE\t      MAE\t MPE\t MAPE\t     MASE \t     ACF1");
-				System.out.println(re.eval("accuracy(forecast(x2,h="+horizon+"),test=\"all\")"));
+				re.eval("x1 <- data.frame(x)");	
+				re.eval("x2 <- msts(x1, seasonal.periods=c("+frequency+","+frequency/24+"), ts.frequency="+frequency*3+", start=0)");
+				re.eval("x3 <- dshw(x2,h="+horizon+")");
+				re.eval("x4 <- data.frame(x3)");
+						
+				re.eval("x5 <- x4[,1]");
+				System.out.println(x=re.eval("x5"));
+//				System.out.println("ME \t    RMSE\t      MAE\t MPE\t MAPE\t     MASE \t     ACF1");
+//				System.out.println(re.eval("accuracy(forecast(x2,h="+horizon+"),test=\"all\")"));
 				
 				forecastArray = x.asDoubleArray();
 			}catch(Exception e){
@@ -80,6 +76,7 @@ public class NNARForecaster {
 	        return forecastListe;
 			else return reduced;
 	}
+
 
 	
 
