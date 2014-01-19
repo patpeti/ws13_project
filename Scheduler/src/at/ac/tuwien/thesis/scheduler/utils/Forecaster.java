@@ -9,6 +9,7 @@ import at.ac.tuwien.thesis.scheduler.utils.forecasts.DSHWForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.FourierForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.HWForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.HourlyDSHWForecaster;
+import at.ac.tuwien.thesis.scheduler.utils.forecasts.HourlyTBATSForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.MaxForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.MeanForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.NNARForecaster;
@@ -52,8 +53,11 @@ public class Forecaster {
 			DSHWForecaster dswh = new DSHWForecaster();
 			return dswh.forecast(valueList, dr_factor, horizon);
 		}else if(forecastType.equals(ForecastType.HOURLYDSWH)){
-				HourlyDSHWForecaster dswh = new HourlyDSHWForecaster();
-				return dswh.forecast(valueList, dr_factor, horizon);
+			HourlyDSHWForecaster dswh = new HourlyDSHWForecaster();
+			return dswh.forecast(valueList, dr_factor, horizon);
+		}else if(forecastType.equals(ForecastType.HOURLYTBATS)){
+				HourlyTBATSForecaster tbats = new HourlyTBATSForecaster();
+				return tbats.forecast(valueList, dr_factor, horizon);
 		}else{
 			return null;
 		}
