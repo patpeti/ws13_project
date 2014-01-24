@@ -10,6 +10,7 @@ public class Machine {
 	List<Application> appListe;
 	double cpu,disk,mem,net;
 	double maxCPU,maxNET,maxDISK,maxMEM;
+	int id;
 	
 	public Machine(){
 		this.maxCPU = Constants.maxCPU;
@@ -18,6 +19,8 @@ public class Machine {
 		this.maxMEM = Constants.maxMEM;
 		cpu = 0; disk = 0; mem = 0; net =0;
 		appListe = new ArrayList<Application>();
+		this.id = Constants.machineId;
+		Constants.machineId++;
 	}
 	
 	public void addApplication(Application app) throws ResourceAllocationException{
@@ -178,25 +181,78 @@ public class Machine {
 	}
 	
 	public double getForecastedUtilization(int step){
-		//TODO
-		return 0;
+		double utilisation = 100-((getForecastedAvailableCPU(step)/maxCPU)*100);
+		utilisation += 100-((getForecastedAvailableMEM(step)/maxMEM)*100);
+		utilisation += 100-((getForecastedAvailableDISK(step)/maxDISK)*100);
+		utilisation += 100-((getForecastedAvailableNET(step)/maxNET)*100);
+		utilisation = utilisation/4;
+		return utilisation;
 	}
 	
-	public double getForecastedAvailableRAM(int step){
-		return 0;
+	public double getForecastedAvailableMEM(int step){
+		double ramSum = 0;
+		for(Application app : appListe){
+			if(app.getForecastedMEM(step) <= 0){
+			}else{
+				ramSum += app.getForecastedMEM(step);
+			}
+		}
+		return ramSum;
 	}
 	
 	public double getForecastedAvailableCPU(int step){
-		return 0;
+		double ramSum = 0;
+		for(Application app : appListe){
+			if(app.getForecastedCPU(step) <= 0){
+			}else{
+				ramSum += app.getForecastedCPU(step);
+			}
+		}
+		return ramSum;
 	}
-	public double getForecastedAvailableMEM(int step){
-		return 0;
+	public double getForecastedAvailableNET(int step){
+		double ramSum = 0;
+		for(Application app : appListe){
+			if(app.getForecastedNET(step) <= 0){
+			}else{
+				ramSum += app.getForecastedNET(step);
+			}
+		}
+		return ramSum;
 	}
 	public double getForecastedAvailableDISK(int step){
-		return 0;
+		double ramSum = 0;
+		for(Application app : appListe){
+			if(app.getForecastedDISK(step) <= 0){
+			}else{
+				ramSum += app.getForecastedDISK(step);
+			}
+		}
+		return ramSum;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Machine other = (Machine) obj;
+		if (id != other.id)
+			return false;
+		return true;
 	}
 	
-
 
 	
 }

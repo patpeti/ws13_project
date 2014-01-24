@@ -40,6 +40,7 @@ public class NaiveSimulator {
 	List<Double> utilisationLog;
 	List<Integer> numPMLog;
 	int numReschedules = 0;
+	int slaViolations = 0;
 	
 	public NaiveSimulator(TimeSeriesModel tsModel) {
 		this.tsModel = tsModel;
@@ -51,8 +52,16 @@ public class NaiveSimulator {
 
 	public void simulate(Integer confidence, Integer split, Integer dimRed) {
 		
-		//split tsModel
-		splitModel(split);
+		if(split >= 100 ){
+			//calculate forecast on the whole dataset, use the second half as test
+			splitModel2(split);
+//			splittedModel1 = tsModel;
+		}else if(split <= 0){
+			splittedModel1 = tsModel;
+			splittedModel2 = tsModel;
+		}else{
+			splitModel(split);
+		}
 		//create list of applications
 		for(String key : splittedModel2.getTsModel().keySet()){
 			List<Double> cpuSeries = splittedModel2.getTsForName(key).getDimension("CPU");
@@ -80,6 +89,7 @@ public class NaiveSimulator {
 				//try assign reschedule list to existing PM-s
 				reschedule.addAll(m.iterate());
 				numReschedules += reschedule.size();
+				slaViolations += reschedule.size();
 			}
 			//assign them to new PM
 			if(!reschedule.isEmpty()){
@@ -269,6 +279,42 @@ public class NaiveSimulator {
 	private void splitModel(Integer split) {
 		dataLength = tsModel.getTsForName("1.csv").getTs().get("CPU").size(); //TODO do not take fixed "1.csv"
 		splitLength = dataLength * split/100;
+
+		splittedModel1 = new TimeSeriesModel();
+		splittedModel2 = new TimeSeriesModel();
+		
+		for(String key : tsModel.getTsModel().keySet()){
+			TimeSeriesHolder tsHolder1 = new TimeSeriesHolder();
+			TimeSeriesHolder tsHolder2 = new TimeSeriesHolder();
+			for(String dim : tsModel.getTsForName(key).getTs().keySet()){
+				List<Double> temp = tsModel.getTsForName(key).getDimension(dim);
+				ArrayList<Double> newSeries1 = new ArrayList<Double>();
+				ArrayList<Double> newSeries2 = new ArrayList<Double>();
+				int i = 0;
+				for(Double d : temp){
+					if(i < splitLength){
+						newSeries1.add(d);
+					}else{
+						newSeries2.add(d);
+					}
+					i++;
+				}
+				tsHolder1.AddSeries(dim, newSeries1);
+				tsHolder2.AddSeries(dim, newSeries2);
+			}
+			splittedModel1.addNewTimeSeries(key,tsHolder1 );
+			splittedModel2.addNewTimeSeries(key,tsHolder2 );
+		}
+		
+		System.out.println("Splitting finished");
+		System.out.println("I. Split length: " + splittedModel1.getTsForName("4.csv").getDimension("CPU").size());
+		System.out.println("II. Split length: " + splittedModel2.getTsForName("4.csv").getDimension("CPU").size());
+		
+	}
+	
+	private void splitModel2(Integer split) {
+		dataLength = tsModel.getTsForName("1.csv").getTs().get("CPU").size(); //TODO do not take fixed "1.csv"
+		splitLength = split;
 
 		splittedModel1 = new TimeSeriesModel();
 		splittedModel2 = new TimeSeriesModel();

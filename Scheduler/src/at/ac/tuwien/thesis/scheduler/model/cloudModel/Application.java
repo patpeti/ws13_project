@@ -78,5 +78,34 @@ public class Application {
 		this.forecastedNetList = dimension;
 		
 	}
+
+	public double getForecastedMEM(int step) {
+		try{
+			return this.forecastedMemList.get(this.pointer+step);
+		}catch(IndexOutOfBoundsException e){
+			return this.forecastedMemList.get(this.pointer);
+		}
+	}
 	
+	public double getForecastedCPU(int step) {
+		try{
+			return this.forecastedCpuList.get(this.pointer+step);
+		}catch(IndexOutOfBoundsException e){
+			return this.forecastedCpuList.get(this.pointer);
+		}
+	}
+	public double getForecastedDISK(int step) {
+		try{
+			return this.forecastedDiskList.get(this.pointer+step);
+		}catch(IndexOutOfBoundsException e){
+			return this.forecastedDiskList.get(this.pointer);
+		}
+	}
+	public double getForecastedNET(int step) {
+		try{
+			return this.forecastedNetList.get(this.pointer+step);
+		}catch(IndexOutOfBoundsException e){
+			return this.forecastedNetList.get(this.pointer);
+		}
+	}
 }

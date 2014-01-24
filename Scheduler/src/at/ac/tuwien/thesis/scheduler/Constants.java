@@ -15,5 +15,6 @@ public class Constants {
 	public static final Integer vmNET = 0;
 	public static final Integer vmMEM = 0;
 	public static final Integer vmDISK = 0;
+	public static int machineId = 0;
 	
 }
