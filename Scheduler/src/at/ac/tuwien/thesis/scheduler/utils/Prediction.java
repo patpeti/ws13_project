@@ -7,6 +7,7 @@ public class Prediction {
 	Machine m;
 	String dimension;
 	Integer step;
+	int age = 0;
 	
 	public Prediction(Machine m, String dimension, Integer step) {
 		super();
@@ -71,6 +72,11 @@ public class Prediction {
 		return true;
 	}
 	
-	
+	public void increaseAge(){
+		this.age++;
+	}
+	public int getAge(){
+		return this.age;
+	}
 
 }

@@ -197,7 +197,7 @@ public class Machine {
 				ramSum += app.getForecastedMEM(step);
 			}
 		}
-		return ramSum;
+		return this.maxMEM-ramSum;
 	}
 	
 	public double getForecastedAvailableCPU(int step){
@@ -208,7 +208,7 @@ public class Machine {
 				ramSum += app.getForecastedCPU(step);
 			}
 		}
-		return ramSum;
+		return this.maxCPU-ramSum;
 	}
 	public double getForecastedAvailableNET(int step){
 		double ramSum = 0;
@@ -218,7 +218,7 @@ public class Machine {
 				ramSum += app.getForecastedNET(step);
 			}
 		}
-		return ramSum;
+		return this.maxNET-ramSum;
 	}
 	public double getForecastedAvailableDISK(int step){
 		double ramSum = 0;
@@ -228,7 +228,7 @@ public class Machine {
 				ramSum += app.getForecastedDISK(step);
 			}
 		}
-		return ramSum;
+		return this.maxDISK-ramSum;
 	}
 
 	@Override

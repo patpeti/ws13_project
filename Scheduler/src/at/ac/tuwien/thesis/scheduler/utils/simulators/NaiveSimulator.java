@@ -87,12 +87,14 @@ public class NaiveSimulator {
 			for(Machine m : pmList){
 				//if ressourceallocationexcption occurs remove app -> assing to reschedule liste
 				//try assign reschedule list to existing PM-s
-				reschedule.addAll(m.iterate());
-				numReschedules += reschedule.size();
-				slaViolations += reschedule.size();
+				List<Application> appsThatDontFit = m.iterate();
+				reschedule.addAll(appsThatDontFit);
+				numReschedules += appsThatDontFit.size();
+				numReschedules += appsThatDontFit.size();
 			}
 			//assign them to new PM
 			if(!reschedule.isEmpty()){
+				slaViolations ++;
 				for(Application app : reschedule){
 //					System.out.println("rescheduling");
 					addToPM(app);

@@ -37,9 +37,28 @@ public class LongTermSimulator {
 	List<Integer> numPMLog;
 	int numReschedules = 0;
 	int slaViolations = 0;
+	int dimensionViolations = 0;
 	
 	int machinepredicted = 0;
-	int machineAndDimensionPredicted = 0;
+	int missedPrediction = 0;
+	
+	int CPUDimensionPredicted = 0;
+	int MEMDimensionPredicted = 0;
+	int DISKDimensionPredicted = 0;
+	int NETDimensionPredicted = 0;
+	
+	int CPUDimensionMissed = 0;
+	int MEMDimensionMissed = 0;
+	int DISKDimensionMissed = 0;
+	int NETDimensionMissed = 0;
+	
+	int falsePositiveMachines = 0;
+	int falsePositiveDimensions = 0;
+	int falsePositiveCPU = 0;
+	int falsePositiveNET = 0;
+	int falsePositiveMEM = 0;
+	int falsePositiveDISK = 0;
+	
 	long forecastTime;
 	long forecastTimePerDim;
 	
@@ -127,8 +146,6 @@ public class LongTermSimulator {
 		//once we have the initial state, start iterating from i = 0 to splitlength
 		//iterate over values -> let PMs adapt changes -> count overall resource utilisation, num of app relocation, SLO violation
 		
-		
-		
 		for(int i = 0; i < (Constants.Horizon)-1; i++){
 			
 			//Make Predictions
@@ -158,19 +175,30 @@ public class LongTermSimulator {
 			for(Machine m : pmList){
 				//if ressourceallocationexcption occurs remove app -> assing to reschedule liste
 				//try assign reschedule list to existing PM-s
-				reschedule.addAll(m.iterate());
-				numReschedules += reschedule.size();
-				slaViolations++;
-				if(!reschedule.isEmpty()){
+				List<Application> appsThatDontFit = m.iterate();
+				reschedule.addAll(appsThatDontFit);
+				numReschedules += appsThatDontFit.size();
+				if(!appsThatDontFit.isEmpty()){
+					slaViolations++;
 					//find out if it was predicted
 					boolean machinepredicted = false;
-					boolean machineAndDimensionPredicted = false;
+					boolean CPUDimensionPredicted = false;
+					boolean DISKDimensionPredicted = false;
+					boolean NETDimensionPredicted = false;
+					boolean MEMDimensionPredicted = false;
+					
+					boolean CPUViolation = false;
+					boolean NETViolation = false;
+					boolean MEMViolation = false;
+					boolean DISKViolation = false;
 					
 					double sumcpu = 0;
 					double summem = 0;
 					double sumnet = 0;
 					double sumdisk= 0;
-					for(Application app : reschedule){
+					List<Application> tempAppList = new ArrayList<Application>(m.getApps());
+					tempAppList.addAll(appsThatDontFit);
+					for(Application app : tempAppList){
 						sumcpu += app.getActualCPU();
 						summem += app.getActualMEM();
 						sumnet += app.getActualNET();
@@ -180,25 +208,123 @@ public class LongTermSimulator {
 					summem = summem - Constants.maxMEM;
 					sumnet = sumnet - Constants.maxNET;
 					sumdisk = sumdisk - Constants.maxDISK;
+					if(sumcpu <=  0) {
+						CPUViolation = true;
+						dimensionViolations++;
+					}
+					if(summem <=  0){
+						MEMViolation = true;
+						dimensionViolations++;
+					}
+					if(sumnet <=  0){
+						NETViolation = true;
+						dimensionViolations++;
+					}
+					if(sumdisk <= 0){
+						DISKViolation = true;
+						dimensionViolations++;
+					}
 					
 					for(Prediction p : predictions){
 						if(p.getM().equals(m)){
 							machinepredicted = true;
-							
-							if(sumcpu <= 0 && p.getDimension().equals("CPU"))  machineAndDimensionPredicted = true;
-							if(summem <= 0 && p.getDimension().equals("MEM"))  machineAndDimensionPredicted = true;
-							if(sumnet <= 0 && p.getDimension().equals("NET"))  machineAndDimensionPredicted = true;
-							if(sumdisk <= 0 && p.getDimension().equals("DISK"))  machineAndDimensionPredicted = true;
-							
+							if(CPUViolation  && p.getDimension().equals("CPU"))  CPUDimensionPredicted = true;
+							if(MEMViolation  && p.getDimension().equals("MEM"))  MEMDimensionPredicted = true;
+							if(NETViolation  && p.getDimension().equals("NET"))  NETDimensionPredicted = true;
+							if(DISKViolation && p.getDimension().equals("DISK"))  DISKDimensionPredicted = true;
 						}
 					}
 					
-					if(machinepredicted) this.machinepredicted++;
-					if(machineAndDimensionPredicted) this.machineAndDimensionPredicted++;
+					if(machinepredicted) {
+						this.machinepredicted++;
+					}else{
+						this.missedPrediction++;
+					}
+					List<Prediction> todelete = new ArrayList<Prediction>();
+					if(CPUDimensionPredicted){
+						this.CPUDimensionPredicted++;
+						//delete from predictions where m = getM && dim = cpu
+						for(Prediction p: predictions){
+							if(m.equals(p.getM()) && p.getDimension().equals("CPU")){
+								todelete.add(p);
+							}
+						}
+					}
+					if(NETDimensionPredicted){
+						this.NETDimensionPredicted++;
+						for(Prediction p: predictions){
+							if(m.equals(p.getM()) && p.getDimension().equals("NET")){
+								todelete.add(p);
+							}
+						}
+					}
+					if(MEMDimensionPredicted){
+						this.MEMDimensionPredicted++;
+						for(Prediction p: predictions){
+							if(m.equals(p.getM()) && p.getDimension().equals("MEM")){
+								todelete.add(p);
+							}
+						}
+					}
+					if(DISKDimensionPredicted){
+						this.DISKDimensionPredicted++;
+						for(Prediction p: predictions){
+							if(m.equals(p.getM()) && p.getDimension().equals("DISK")){
+								todelete.add(p);
+							}
+						}
+					}
+					
+					if(CPUViolation && !CPUDimensionPredicted) this.CPUDimensionMissed++;
+					if(MEMViolation && !MEMDimensionPredicted) this.MEMDimensionMissed++;
+					if(NETViolation && !NETDimensionPredicted) this.NETDimensionMissed++;
+					if(DISKViolation && !DISKDimensionPredicted) this.DISKDimensionMissed++;
+					
+					//delete used Predictions
+					List<Prediction> newList = new ArrayList<Prediction>();
+					for(Prediction p: predictions){
+						if(!todelete.contains(p)){
+							newList.add(p);
+						}
+					}
+					predictions.clear();
+					predictions.addAll(newList);
 					
 				}
-				
+				//no rescheduling needed on the machine -> aging of predictions and count false positives
+				if(appsThatDontFit.isEmpty()){
+					// -> prediction aging + determine false pozitives
+					List<Prediction> agedPredictions = new ArrayList<Prediction>();
+					List<Machine> falsePositiveMachines = new ArrayList<Machine>();
+					for(Prediction p : predictions){
+						p.increaseAge();
+						if(p.getAge() >= steps){
+							agedPredictions.add(p);
+						}
+					}
+					for(Prediction p : agedPredictions){
+						falsePositiveMachines.add(p.getM());
+						if(p.getDimension().equals("CPU")) this.falsePositiveCPU++;
+						if(p.getDimension().equals("NET")) this.falsePositiveNET++;
+						if(p.getDimension().equals("MEM")) this.falsePositiveMEM++;
+						if(p.getDimension().equals("DISK")) this.falsePositiveDISK++;
+					}
+					this.falsePositiveMachines += falsePositiveMachines.size();
+					this.falsePositiveDimensions += agedPredictions.size();
+
+					//delete aged predictions
+					List<Prediction> newList = new ArrayList<Prediction>();
+					for(Prediction p: predictions){
+						if(!agedPredictions.contains(p)){
+							newList.add(p);
+						}
+					}
+					predictions.clear();
+					predictions.addAll(newList);
+				}
 			}
+
+			
 			//assign them to new PM
 			if(!reschedule.isEmpty()){
 				for(Application app : reschedule){
@@ -206,7 +332,7 @@ public class LongTermSimulator {
 					addToPM(app);
 				}
 			}
-			//CONSOLIDATION
+//			//CONSOLIDATION
 			utilisationLog.add(i,calculateUtilization());
 			try{
 				//if utilization is low(er) try to migrate one PM-s apps to other PMs
@@ -272,10 +398,12 @@ public class LongTermSimulator {
 		}
 
 		System.out.println("Number of reschedules: " + numReschedules);
+		System.out.println("SLA VIolations: " + slaViolations);
 		System.out.println("AVG number of Machines: "+ calculateMean2(numPMLog));
 		System.out.println("AVG Overall Utilization: "+ calculateMean(utilisationLog));
 		System.out.println("SLAViolationsPredicted - MachinesPredicted: "+ machinepredicted);
-		System.out.println("SLAViolationsPredicted - MachineAndDimensionPredicted: "+ machineAndDimensionPredicted);
+//		System.out.println("SLAViolationsPredicted - MachineAndDimensionPredicted: "+ machineAndDimensionPredicted);
+		System.out.println("Missed Predictions: "+ missedPrediction);
 		System.out.println("Forecast Overhead overall (millisec): "+ forecastTime);
 		System.out.println("AVG Forecast Overhead per Dimension (millisec) : "+ forecastTimePerDim);
 		
