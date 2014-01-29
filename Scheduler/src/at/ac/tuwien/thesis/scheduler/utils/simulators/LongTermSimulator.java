@@ -178,6 +178,7 @@ public class LongTermSimulator {
 				List<Application> appsThatDontFit = m.iterate();
 				reschedule.addAll(appsThatDontFit);
 				numReschedules += appsThatDontFit.size();
+				
 				if(!appsThatDontFit.isEmpty()){
 					slaViolations++;
 					//find out if it was predicted
@@ -196,8 +197,10 @@ public class LongTermSimulator {
 					double summem = 0;
 					double sumnet = 0;
 					double sumdisk= 0;
+					//find violation
 					List<Application> tempAppList = new ArrayList<Application>(m.getApps());
 					tempAppList.addAll(appsThatDontFit);
+					
 					for(Application app : tempAppList){
 						sumcpu += app.getActualCPU();
 						summem += app.getActualMEM();
@@ -228,62 +231,36 @@ public class LongTermSimulator {
 					for(Prediction p : predictions){
 						if(p.getM().equals(m)){
 							machinepredicted = true;
-							if(CPUViolation  && p.getDimension().equals("CPU"))  CPUDimensionPredicted = true;
-							if(MEMViolation  && p.getDimension().equals("MEM"))  MEMDimensionPredicted = true;
-							if(NETViolation  && p.getDimension().equals("NET"))  NETDimensionPredicted = true;
-							if(DISKViolation && p.getDimension().equals("DISK"))  DISKDimensionPredicted = true;
+							if(p.getDimension().equals("CPU"))  CPUDimensionPredicted = true;
+							if(p.getDimension().equals("MEM"))  MEMDimensionPredicted = true;
+							if(p.getDimension().equals("NET"))  NETDimensionPredicted = true;
+							if(p.getDimension().equals("DISK"))  DISKDimensionPredicted = true;
 						}
 					}
 					
-					if(machinepredicted) {
-						this.machinepredicted++;
-					}else{
-						this.missedPrediction++;
-					}
-					List<Prediction> todelete = new ArrayList<Prediction>();
-					if(CPUDimensionPredicted){
-						this.CPUDimensionPredicted++;
-						//delete from predictions where m = getM && dim = cpu
-						for(Prediction p: predictions){
-							if(m.equals(p.getM()) && p.getDimension().equals("CPU")){
-								todelete.add(p);
-							}
-						}
-					}
-					if(NETDimensionPredicted){
-						this.NETDimensionPredicted++;
-						for(Prediction p: predictions){
-							if(m.equals(p.getM()) && p.getDimension().equals("NET")){
-								todelete.add(p);
-							}
-						}
-					}
-					if(MEMDimensionPredicted){
-						this.MEMDimensionPredicted++;
-						for(Prediction p: predictions){
-							if(m.equals(p.getM()) && p.getDimension().equals("MEM")){
-								todelete.add(p);
-							}
-						}
-					}
-					if(DISKDimensionPredicted){
-						this.DISKDimensionPredicted++;
-						for(Prediction p: predictions){
-							if(m.equals(p.getM()) && p.getDimension().equals("DISK")){
-								todelete.add(p);
-							}
-						}
-					}
+					if(machinepredicted) this.machinepredicted++;
+					else				 this.missedPrediction++;
+					
+					
+					if(CPUViolation && CPUDimensionPredicted) this.CPUDimensionPredicted++;
+					if(MEMViolation && MEMDimensionPredicted) this.MEMDimensionPredicted++;
+					if(NETViolation && NETDimensionPredicted) this.NETDimensionPredicted++;
+					if(DISKViolation && DISKDimensionPredicted) this.DISKDimensionPredicted++;
 					
 					if(CPUViolation && !CPUDimensionPredicted) this.CPUDimensionMissed++;
 					if(MEMViolation && !MEMDimensionPredicted) this.MEMDimensionMissed++;
 					if(NETViolation && !NETDimensionPredicted) this.NETDimensionMissed++;
 					if(DISKViolation && !DISKDimensionPredicted) this.DISKDimensionMissed++;
 					
-					//delete used Predictions
+					if(!CPUViolation && CPUDimensionPredicted) this.falsePositiveCPU++;
+					if(!MEMViolation && MEMDimensionPredicted) this.falsePositiveMEM++;
+					if(!NETViolation && NETDimensionPredicted) this.falsePositiveNET++;
+					if(!DISKViolation && DISKDimensionPredicted) this.falsePositiveDISK++;
+					
+					//flush predictions on this machine
 					List<Prediction> newList = new ArrayList<Prediction>();
 					for(Prediction p: predictions){
-						if(!todelete.contains(p)){
+						if(!p.getM().equals(m)){
 							newList.add(p);
 						}
 					}
@@ -293,34 +270,59 @@ public class LongTermSimulator {
 				}
 				//no rescheduling needed on the machine -> aging of predictions and count false positives
 				if(appsThatDontFit.isEmpty()){
-					// -> prediction aging + determine false pozitives
-					List<Prediction> agedPredictions = new ArrayList<Prediction>();
-					List<Machine> falsePositiveMachines = new ArrayList<Machine>();
-					for(Prediction p : predictions){
-						p.increaseAge();
-						if(p.getAge() >= steps){
-							agedPredictions.add(p);
-						}
-					}
-					for(Prediction p : agedPredictions){
-						falsePositiveMachines.add(p.getM());
-						if(p.getDimension().equals("CPU")) this.falsePositiveCPU++;
-						if(p.getDimension().equals("NET")) this.falsePositiveNET++;
-						if(p.getDimension().equals("MEM")) this.falsePositiveMEM++;
-						if(p.getDimension().equals("DISK")) this.falsePositiveDISK++;
-					}
-					this.falsePositiveMachines += falsePositiveMachines.size();
-					this.falsePositiveDimensions += agedPredictions.size();
-
-					//delete aged predictions
-					List<Prediction> newList = new ArrayList<Prediction>();
+					//select predictions that refer to the machine m
+					List<Prediction> temp = new ArrayList<Prediction>();
+					boolean falsepositiveMachine = false;
+					boolean falsePositiveCPU = false;
+					boolean falsePositiveNET = false;
+					boolean falsePositiveDISK = false;
+					boolean falsePositiveMEM = false;
 					for(Prediction p: predictions){
-						if(!agedPredictions.contains(p)){
-							newList.add(p);
+						if(p.getM().equals(m)){
+							temp.add(p);
 						}
 					}
-					predictions.clear();
-					predictions.addAll(newList);
+					//increase age
+					if(!temp.isEmpty()){
+						for(Prediction p : temp){
+							//delete from predictions
+							predictions.remove(p);
+							//increase age
+							p.increaseAge();
+							if(p.getAge() >= steps){
+								//find falsepositives
+								falsepositiveMachine = true;
+								p.setToDelete(true);
+								if(p.getDimension().equals("CPU")) falsePositiveCPU = true;
+								if(p.getDimension().equals("NET")) falsePositiveNET = true;
+								if(p.getDimension().equals("MEM")) falsePositiveMEM = true;
+								if(p.getDimension().equals("DISK")) falsePositiveDISK = true;
+							}
+						}
+						if(falsepositiveMachine) this.falsePositiveMachines++;
+						if(falsePositiveCPU){
+							this.falsePositiveCPU++;
+							this.falsePositiveDimensions++;
+						}
+						if(falsePositiveNET){
+							this.falsePositiveNET++;
+							this.falsePositiveDimensions++;
+						}
+						if(falsePositiveDISK){
+							this.falsePositiveDISK++;
+							this.falsePositiveDimensions++;
+						}
+						if(falsePositiveMEM) {
+							this.falsePositiveMEM++;
+							this.falsePositiveDimensions++;
+						}
+						//put back in the list those predictions that are not aged
+						for(Prediction p : temp){
+							if(!p.isToDelete()){
+								predictions.add(p);
+							}
+						}
+					}
 				}
 			}
 
@@ -386,6 +388,16 @@ public class LongTermSimulator {
 					}else if(rescheduled == tryReschedule.size()){
 						numReschedules += rescheduled;
 						System.out.println("rescheduling success");
+						//delete predictions on machine "lowest" from predictions
+						List<Prediction> newList = new ArrayList<Prediction>();
+						for(Prediction p: predictions){
+							if(!p.getM().equals(lowest)){
+								newList.add(p);
+							}
+						}
+						predictions.clear();
+						predictions.addAll(newList);
+						
 					}else{
 						System.err.println("wtf");
 					}

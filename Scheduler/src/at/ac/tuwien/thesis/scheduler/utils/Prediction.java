@@ -3,12 +3,13 @@ package at.ac.tuwien.thesis.scheduler.utils;
 import at.ac.tuwien.thesis.scheduler.model.cloudModel.Machine;
 
 public class Prediction {
-	
+
 	Machine m;
 	String dimension;
 	Integer step;
 	int age = 0;
-	
+	boolean toDelete = false;
+
 	public Prediction(Machine m, String dimension, Integer step) {
 		super();
 		this.m = m;
@@ -71,12 +72,21 @@ public class Prediction {
 			return false;
 		return true;
 	}
-	
-	public void increaseAge(){
+
+	public void increaseAge() {
 		this.age++;
 	}
-	public int getAge(){
+
+	public int getAge() {
 		return this.age;
+	}
+
+	public boolean isToDelete() {
+		return toDelete;
+	}
+
+	public void setToDelete(boolean toDelete) {
+		this.toDelete = toDelete;
 	}
 
 }

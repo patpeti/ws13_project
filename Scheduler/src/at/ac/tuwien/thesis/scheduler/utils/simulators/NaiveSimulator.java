@@ -90,7 +90,6 @@ public class NaiveSimulator {
 				List<Application> appsThatDontFit = m.iterate();
 				reschedule.addAll(appsThatDontFit);
 				numReschedules += appsThatDontFit.size();
-				numReschedules += appsThatDontFit.size();
 			}
 			//assign them to new PM
 			if(!reschedule.isEmpty()){
