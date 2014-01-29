@@ -39,13 +39,20 @@ public class LongTermSimulator {
 	int slaViolations = 0;
 	int dimensionViolations = 0;
 	
+	int CPUDimensionViolated = 0;
+	int MEMDimensionViolated = 0;
+	int DISKDimensionViolated = 0;
+	int NETDimensionViolated = 0;
+	
 	int machinepredicted = 0;
 	int missedPrediction = 0;
+	int missedDimensions = 0;
 	
 	int CPUDimensionPredicted = 0;
 	int MEMDimensionPredicted = 0;
 	int DISKDimensionPredicted = 0;
 	int NETDimensionPredicted = 0;
+	int dimensionPredicted = 0;
 	
 	int CPUDimensionMissed = 0;
 	int MEMDimensionMissed = 0;
@@ -213,18 +220,22 @@ public class LongTermSimulator {
 					sumdisk = sumdisk - Constants.maxDISK;
 					if(sumcpu <=  0) {
 						CPUViolation = true;
+						CPUDimensionViolated++;
 						dimensionViolations++;
 					}
 					if(summem <=  0){
 						MEMViolation = true;
+						MEMDimensionViolated++;
 						dimensionViolations++;
 					}
 					if(sumnet <=  0){
 						NETViolation = true;
+						NETDimensionViolated++;
 						dimensionViolations++;
 					}
 					if(sumdisk <= 0){
 						DISKViolation = true;
+						DISKDimensionViolated++;
 						dimensionViolations++;
 					}
 					
@@ -241,21 +252,58 @@ public class LongTermSimulator {
 					if(machinepredicted) this.machinepredicted++;
 					else				 this.missedPrediction++;
 					
+					//count predictions
+					if(CPUViolation && CPUDimensionPredicted){
+						this.CPUDimensionPredicted++;
+						this.dimensionPredicted++;
+					}
+					if(MEMViolation && MEMDimensionPredicted){
+						this.MEMDimensionPredicted++;
+						this.dimensionPredicted++;
+					}
+					if(NETViolation && NETDimensionPredicted){
+						this.NETDimensionPredicted++;
+						this.dimensionPredicted++;
+					}
+					if(DISKViolation && DISKDimensionPredicted){
+						this.DISKDimensionPredicted++;
+						this.dimensionPredicted++;
+					}
 					
-					if(CPUViolation && CPUDimensionPredicted) this.CPUDimensionPredicted++;
-					if(MEMViolation && MEMDimensionPredicted) this.MEMDimensionPredicted++;
-					if(NETViolation && NETDimensionPredicted) this.NETDimensionPredicted++;
-					if(DISKViolation && DISKDimensionPredicted) this.DISKDimensionPredicted++;
-					
-					if(CPUViolation && !CPUDimensionPredicted) this.CPUDimensionMissed++;
-					if(MEMViolation && !MEMDimensionPredicted) this.MEMDimensionMissed++;
-					if(NETViolation && !NETDimensionPredicted) this.NETDimensionMissed++;
-					if(DISKViolation && !DISKDimensionPredicted) this.DISKDimensionMissed++;
-					
-					if(!CPUViolation && CPUDimensionPredicted) this.falsePositiveCPU++;
-					if(!MEMViolation && MEMDimensionPredicted) this.falsePositiveMEM++;
-					if(!NETViolation && NETDimensionPredicted) this.falsePositiveNET++;
-					if(!DISKViolation && DISKDimensionPredicted) this.falsePositiveDISK++;
+					// count false positives
+					if(!CPUViolation && CPUDimensionPredicted){
+						this.falsePositiveCPU++;
+						this.falsePositiveDimensions++;
+					}
+					if(!MEMViolation && MEMDimensionPredicted){
+						this.falsePositiveMEM++;
+						this.falsePositiveDimensions++;
+					}
+					if(!NETViolation && NETDimensionPredicted){
+						this.falsePositiveNET++;
+						falsePositiveDimensions++;
+					}
+					if(!DISKViolation && DISKDimensionPredicted){
+						this.falsePositiveDISK++;
+						this.falsePositiveDimensions++;
+					}
+					//count misses
+					if(CPUViolation && !CPUDimensionPredicted){
+						this.CPUDimensionMissed++;
+						this.missedDimensions++;
+					}
+					if(MEMViolation && !MEMDimensionPredicted){
+						this.MEMDimensionMissed++;
+						this.missedDimensions++;
+					}
+					if(NETViolation && !NETDimensionPredicted){
+						this.NETDimensionMissed++;
+						this.missedDimensions++;
+					}
+					if(DISKViolation && !DISKDimensionPredicted){
+						this.DISKDimensionMissed++;
+						this.missedDimensions++;
+					}
 					
 					//flush predictions on this machine
 					List<Prediction> newList = new ArrayList<Prediction>();
@@ -410,16 +458,35 @@ public class LongTermSimulator {
 		}
 
 		System.out.println("Number of reschedules: " + numReschedules);
-		System.out.println("SLA VIolations: " + slaViolations);
-		System.out.println("AVG number of Machines: "+ calculateMean2(numPMLog));
-		System.out.println("AVG Overall Utilization: "+ calculateMean(utilisationLog));
-		System.out.println("SLAViolationsPredicted - MachinesPredicted: "+ machinepredicted);
-//		System.out.println("SLAViolationsPredicted - MachineAndDimensionPredicted: "+ machineAndDimensionPredicted);
-		System.out.println("Missed Predictions: "+ missedPrediction);
-		System.out.println("Forecast Overhead overall (millisec): "+ forecastTime);
-		System.out.println("AVG Forecast Overhead per Dimension (millisec) : "+ forecastTimePerDim);
+		System.out.println("Per Machine");
+		System.out.println("-------------------------------------------------------------------------------------------------------");
+		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
+		System.out.println("" + slaViolations +" \t " + machinepredicted  +" \t " + missedPrediction +" \t " + falsePositiveMachines);
 		
+		System.out.println("Per Dimension");
+		System.out.println("-------------------------------------------------------------------------------------------------------");
+		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
+		System.out.println("" + dimensionViolations +" \t " + dimensionPredicted  +" \t " + missedDimensions +" \t " + falsePositiveDimensions);
 		
+		System.out.println("Per CPU");
+		System.out.println("-------------------------------------------------------------------------------------------------------");
+		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
+		System.out.println("" + CPUDimensionViolated +" \t " + CPUDimensionPredicted  +" \t " + CPUDimensionMissed +" \t " + falsePositiveCPU);
+		
+		System.out.println("Per MEM");
+		System.out.println("-------------------------------------------------------------------------------------------------------");
+		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
+		System.out.println("" + MEMDimensionViolated +" \t " + MEMDimensionPredicted  +" \t " + MEMDimensionMissed +" \t " + falsePositiveMEM);
+		
+		System.out.println("Per NET");
+		System.out.println("-------------------------------------------------------------------------------------------------------");
+		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
+		System.out.println("" + NETDimensionViolated +" \t " + NETDimensionPredicted  +" \t " + NETDimensionMissed +" \t " + falsePositiveNET);
+		
+		System.out.println("Per NET");
+		System.out.println("-------------------------------------------------------------------------------------------------------");
+		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
+		System.out.println("" + NETDimensionViolated +" \t " + NETDimensionPredicted  +" \t " + NETDimensionMissed +" \t " + falsePositiveNET);
 	}
 	
 	private double calculateUtilization(){
