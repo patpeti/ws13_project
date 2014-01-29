@@ -40,7 +40,13 @@ public class NaiveSimulator {
 	List<Double> utilisationLog;
 	List<Integer> numPMLog;
 	int numReschedules = 0;
-	int slaViolations = 0;
+	int machineViolations = 0;
+	int dimensionViolations = 0;
+	
+	int CPUDimensionViolated = 0;
+	int MEMDimensionViolated = 0;
+	int DISKDimensionViolated = 0;
+	int NETDimensionViolated = 0;
 	
 	public NaiveSimulator(TimeSeriesModel tsModel) {
 		this.tsModel = tsModel;
@@ -90,10 +96,58 @@ public class NaiveSimulator {
 				List<Application> appsThatDontFit = m.iterate();
 				reschedule.addAll(appsThatDontFit);
 				numReschedules += appsThatDontFit.size();
+				
+				if(!appsThatDontFit.isEmpty()){
+					machineViolations ++;
+					//find out if it was predicted
+					boolean CPUViolation = false;
+					boolean NETViolation = false;
+					boolean MEMViolation = false;
+					boolean DISKViolation = false;
+					
+					double sumcpu = 0;
+					double summem = 0;
+					double sumnet = 0;
+					double sumdisk= 0;
+					//find violation
+					List<Application> tempAppList = new ArrayList<Application>(m.getApps());
+					tempAppList.addAll(appsThatDontFit);
+					
+					for(Application app : tempAppList){
+						sumcpu += app.getActualCPU();
+						summem += app.getActualMEM();
+						sumnet += app.getActualNET();
+						sumdisk += app.getActualDISK();
+					}
+					sumcpu = sumcpu - Constants.maxCPU;
+					summem = summem - Constants.maxMEM;
+					sumnet = sumnet - Constants.maxNET;
+					sumdisk = sumdisk - Constants.maxDISK;
+					if(sumcpu <=  0) {
+						CPUViolation = true;
+						CPUDimensionViolated++;
+						dimensionViolations++;
+					}
+					if(summem <=  0){
+						MEMViolation = true;
+						MEMDimensionViolated++;
+						dimensionViolations++;
+					}
+					if(sumnet <=  0){
+						NETViolation = true;
+						NETDimensionViolated++;
+						dimensionViolations++;
+					}
+					if(sumdisk <= 0){
+						DISKViolation = true;
+						DISKDimensionViolated++;
+						dimensionViolations++;
+					}
+				}	
 			}
 			//assign them to new PM
 			if(!reschedule.isEmpty()){
-				slaViolations ++;
+				
 				for(Application app : reschedule){
 //					System.out.println("rescheduling");
 					addToPM(app);
@@ -165,6 +219,12 @@ public class NaiveSimulator {
 		}
 		//OUTPUT
 		System.out.println("Number of reschedules: " + numReschedules);
+		System.out.println("Number of Violations: ");
+		System.out.println("MachineViolation :" + machineViolations);
+		System.out.println("DimensionViolation :" + dimensionViolations);
+		System.out.println("CPUViolation \t MEMViolation \t NETViolation \t DISKViolation");
+		System.out.println(CPUDimensionViolated + " \t " + MEMDimensionViolated + " \t " + NETDimensionViolated + " \t " + DISKDimensionViolated);
+	
 		
 		XYSeries s1 = new XYSeries("utilisation");
 		XYSeries s2 = new XYSeries("Machines");
