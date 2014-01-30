@@ -55,7 +55,7 @@ public class Application {
 		return name;
 	}
 	public String toString(){
-		return name;
+		return name + "C/M/N/D    /" + getActualCPU()+ "/" + getActualMEM()+ "/" + getActualNET()+ "/" + getActualDISK();
 	}
 	public int size(){
 		return this.cpuList.size();

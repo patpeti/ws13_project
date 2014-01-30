@@ -119,10 +119,10 @@ public class NaiveSimulator {
 						sumnet += app.getActualNET();
 						sumdisk += app.getActualDISK();
 					}
-					sumcpu = sumcpu - Constants.maxCPU;
-					summem = summem - Constants.maxMEM;
-					sumnet = sumnet - Constants.maxNET;
-					sumdisk = sumdisk - Constants.maxDISK;
+					sumcpu = Constants.maxCPU - sumcpu;
+					summem = Constants.maxMEM - summem;
+					sumnet = Constants.maxNET - sumnet;
+					sumdisk =Constants.maxDISK - sumdisk;
 					if(sumcpu <=  0) {
 						CPUViolation = true;
 						CPUDimensionViolated++;
@@ -223,7 +223,7 @@ public class NaiveSimulator {
 		System.out.println("MachineViolation :" + machineViolations);
 		System.out.println("DimensionViolation :" + dimensionViolations);
 		System.out.println("CPUViolation \t MEMViolation \t NETViolation \t DISKViolation");
-		System.out.println(CPUDimensionViolated + " \t " + MEMDimensionViolated + " \t " + NETDimensionViolated + " \t " + DISKDimensionViolated);
+		System.out.println(CPUDimensionViolated + " \t\t " + MEMDimensionViolated + " \t\t " + NETDimensionViolated + " \t\t " + DISKDimensionViolated);
 	
 		
 		XYSeries s1 = new XYSeries("utilisation");

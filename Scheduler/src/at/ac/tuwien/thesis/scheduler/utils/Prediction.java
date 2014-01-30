@@ -89,4 +89,11 @@ public class Prediction {
 		this.toDelete = toDelete;
 	}
 
+	@Override
+	public String toString() {
+		return "Prediction [m=" + m + ", dimension=" + dimension + ", step="
+				+ step + ", age=" + age + "]";
+	}
+
+	
 }

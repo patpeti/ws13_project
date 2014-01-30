@@ -252,7 +252,12 @@ public class Machine {
 			return false;
 		return true;
 	}
-	
 
+	@Override
+	public String toString() {
+		return "Machine [id=" + id + "]";
+	}
+	
+	
 	
 }

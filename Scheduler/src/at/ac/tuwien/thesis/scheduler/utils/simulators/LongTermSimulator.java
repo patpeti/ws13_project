@@ -214,10 +214,10 @@ public class LongTermSimulator {
 						sumnet += app.getActualNET();
 						sumdisk += app.getActualDISK();
 					}
-					sumcpu = sumcpu - Constants.maxCPU;
-					summem = summem - Constants.maxMEM;
-					sumnet = sumnet - Constants.maxNET;
-					sumdisk = sumdisk - Constants.maxDISK;
+					sumcpu = Constants.maxCPU - sumcpu;
+					summem = Constants.maxMEM - summem;
+					sumnet = Constants.maxNET - sumnet;
+					sumdisk =Constants.maxDISK - sumdisk;
 					if(sumcpu <=  0) {
 						CPUViolation = true;
 						CPUDimensionViolated++;
@@ -465,42 +465,42 @@ public class LongTermSimulator {
 		System.out.println("Per Machine");
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
-		System.out.println("" + machineViolations +" \t " + machinePredicted  +" \t " + missedPrediction +" \t " + falsePositiveMachines);
+		System.out.println("" + machineViolations +" \t\t " + machinePredicted  +" \t\t " + missedPrediction +" \t\t " + falsePositiveMachines);
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println();
 		
 		System.out.println("Per Dimension");
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
-		System.out.println("" + dimensionViolations +" \t " + dimensionPredicted  +" \t " + missedDimensions +" \t " + falsePositiveDimensions);
+		System.out.println("" + dimensionViolations +" \t\t " + dimensionPredicted  +" \t\t " + missedDimensions +" \t\t " + falsePositiveDimensions);
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println();
 		
 		System.out.println("Per CPU");
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
-		System.out.println("" + CPUDimensionViolated +" \t " + CPUDimensionPredicted  +" \t " + CPUDimensionMissed +" \t " + falsePositiveCPU);
+		System.out.println("" + CPUDimensionViolated +" \t\t " + CPUDimensionPredicted  +" \t\t " + CPUDimensionMissed +" \t\t " + falsePositiveCPU);
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println();
 		
 		System.out.println("Per MEM");
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
-		System.out.println("" + MEMDimensionViolated +" \t " + MEMDimensionPredicted  +" \t " + MEMDimensionMissed +" \t " + falsePositiveMEM);
+		System.out.println("" + MEMDimensionViolated +" \t\t " + MEMDimensionPredicted  +" \t\t " + MEMDimensionMissed +" \t\t " + falsePositiveMEM);
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println();
 		
 		System.out.println("Per NET");
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
-		System.out.println("" + NETDimensionViolated +" \t " + NETDimensionPredicted  +" \t " + NETDimensionMissed +" \t " + falsePositiveNET);
+		System.out.println("" + NETDimensionViolated +" \t\t " + NETDimensionPredicted  +" \t\t " + NETDimensionMissed +" \t\t " + falsePositiveNET);
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println();
 		
-		System.out.println("Per NET");
+		System.out.println("Per DISK");
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
-		System.out.println("" + NETDimensionViolated +" \t " + NETDimensionPredicted  +" \t " + NETDimensionMissed +" \t " + falsePositiveNET);
+		System.out.println("" + DISKDimensionViolated +" \t\t " + DISKDimensionPredicted  +" \t\t " + DISKDimensionMissed +" \t\t " + falsePositiveNET);
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println();
 	}
