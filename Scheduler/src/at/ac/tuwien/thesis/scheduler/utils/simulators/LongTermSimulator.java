@@ -30,7 +30,7 @@ public class LongTermSimulator {
 	int splitLength;
 	int dataLength;
 	
-	public final static Integer steps = 10;
+	public final static Integer steps = 25;
 	public List<Prediction> predictions;
 	
 	List<Double> utilisationLog;
@@ -157,10 +157,11 @@ public class LongTermSimulator {
 			
 			//Make Predictions
 			//TODO implement confidance level
-			for(int j = 0; j< steps;j++){
+			
 				//if predictedavailable < 0  -> add machine and dimension to the list
-				for(Machine m : pmList){
-
+			for(Machine m : pmList){
+				for(int j = 10; j< steps+1;j++){
+					
 					if(m.getForecastedAvailableCPU(j) < 0){
 						predictions.add(new Prediction(m,"CPU",j));
 					}
@@ -175,7 +176,7 @@ public class LongTermSimulator {
 					}
 				}
 			}
-			
+
 //			System.out.println("Iteration: "+i);
 			//set Application pointer++ for each application in each machine
 			List<Application> reschedule = new ArrayList<Application>();
@@ -270,23 +271,23 @@ public class LongTermSimulator {
 						this.dimensionPredicted++;
 					}
 					
-					// count false positives
-					if(!CPUViolation && CPUDimensionPredicted){
-						this.falsePositiveCPU++;
-						this.falsePositiveDimensions++;
-					}
-					if(!MEMViolation && MEMDimensionPredicted){
-						this.falsePositiveMEM++;
-						this.falsePositiveDimensions++;
-					}
-					if(!NETViolation && NETDimensionPredicted){
-						this.falsePositiveNET++;
-						falsePositiveDimensions++;
-					}
-					if(!DISKViolation && DISKDimensionPredicted){
-						this.falsePositiveDISK++;
-						this.falsePositiveDimensions++;
-					}
+//					// count false positives
+//					if(!CPUViolation && CPUDimensionPredicted){
+//						this.falsePositiveCPU++;
+//						this.falsePositiveDimensions++;
+//					}
+//					if(!MEMViolation && MEMDimensionPredicted){
+//						this.falsePositiveMEM++;
+//						this.falsePositiveDimensions++;
+//					}
+//					if(!NETViolation && NETDimensionPredicted){
+//						this.falsePositiveNET++;
+//						falsePositiveDimensions++;
+//					}
+//					if(!DISKViolation && DISKDimensionPredicted){
+//						this.falsePositiveDISK++;
+//						this.falsePositiveDimensions++;
+//					}
 					//count misses
 					if(CPUViolation && !CPUDimensionPredicted){
 						this.CPUDimensionMissed++;
@@ -337,7 +338,7 @@ public class LongTermSimulator {
 							predictions.remove(p);
 							//increase age
 							p.increaseAge();
-							if(p.getAge() >= steps){
+							if(p.getAge() >= steps*2){
 								//find falsepositives
 								falsepositiveMachine = true;
 								p.setToDelete(true);
@@ -347,7 +348,9 @@ public class LongTermSimulator {
 								if(p.getDimension().equals("DISK")) falsePositiveDISK = true;
 							}
 						}
-						if(falsepositiveMachine) this.falsePositiveMachines++;
+						if(falsepositiveMachine) {
+							this.falsePositiveMachines++;
+						}
 						if(falsePositiveCPU){
 							this.falsePositiveCPU++;
 							this.falsePositiveDimensions++;

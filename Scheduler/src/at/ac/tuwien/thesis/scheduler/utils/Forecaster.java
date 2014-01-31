@@ -14,6 +14,7 @@ import at.ac.tuwien.thesis.scheduler.utils.forecasts.MaxForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.MeanForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.NNARForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.NaiveForecaster;
+import at.ac.tuwien.thesis.scheduler.utils.forecasts.SporadicForecaster;
 import at.ac.tuwien.thesis.scheduler.utils.forecasts.TBATSForecaster;
 
 public class Forecaster {
@@ -58,6 +59,9 @@ public class Forecaster {
 		}else if(forecastType.equals(ForecastType.HOURLYTBATS)){
 				HourlyTBATSForecaster tbats = new HourlyTBATSForecaster();
 				return tbats.forecast(valueList, dr_factor, horizon);
+		}else if(forecastType.equals(ForecastType.SPORADIC)){
+			SporadicForecaster sporadic = new SporadicForecaster();
+			return sporadic.forecast(valueList,dr_factor,horizon);
 		}else{
 			return null;
 		}

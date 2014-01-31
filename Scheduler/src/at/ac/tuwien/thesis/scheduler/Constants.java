@@ -6,9 +6,13 @@ public class Constants {
 	public static  Integer DataPerWeek = DataPerDay*7;
 	public static  Integer Horizon = DataPerWeek;
 	
-	public static final Integer maxCPU = 90*3;
-	public static final Integer maxNET = 7000*3;
-	public static final Integer maxMEM = 25*3;
+//	public static final Integer maxCPU = 90*3;
+//	public static final Integer maxNET = 7000*3;
+//	public static final Integer maxMEM = 25*3;
+//	public static final Integer maxDISK = 4*4;
+	public static final Integer maxCPU = 90*2;
+	public static final Integer maxNET = 7000*2;
+	public static final Integer maxMEM = 100;
 	public static final Integer maxDISK = 4*4;
 	
 	public static final Integer vmCPU = 0;
