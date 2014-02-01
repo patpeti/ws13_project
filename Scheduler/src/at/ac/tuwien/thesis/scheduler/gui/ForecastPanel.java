@@ -94,6 +94,11 @@ public class ForecastPanel {
 		chckbxNewCheckBox.setSelected(true);
 		panel_sub.add(chckbxNewCheckBox, BorderLayout.NORTH);
 
+		comboBox.setSelectedIndex(7);
+		comboBox1.setSelectedIndex(7);
+		comboBox2.setSelectedIndex(7);
+		comboBox3.setSelectedIndex(12);
+		
 		sc.setView(this);
 		comboBox.addActionListener(sc);
 		comboBox1.addActionListener(sc);

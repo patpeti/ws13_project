@@ -1,9 +1,24 @@
 package at.ac.tuwien.thesis.scheduler.utils.simulators;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.swing.JFrame;
+
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
+import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.data.xy.XYDataset;
+import org.jfree.data.xy.XYSeries;
+import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RectangleInsets;
 
 import at.ac.tuwien.thesis.scheduler.Constants;
 import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
@@ -30,7 +45,8 @@ public class LongTermSimulator2 {
 	int splitLength;
 	int dataLength;
 	
-	public final static Integer window = 10;
+	public final static Integer offset = 50;
+	public final static Integer window = 20;
 	
 	List<Double> utilisationLog;
 	List<Integer> numPMLog;
@@ -63,7 +79,7 @@ public class LongTermSimulator2 {
 	int NETDimensionMissed = 0;
 	
 	int falsePositiveMachines = 0;
-	int falsePositiveDimensions = 0;
+	private int falsePositiveDimensions = 0;
 	int falsePositiveCPU = 0;
 	int falsePositiveNET = 0;
 	int falsePositiveMEM = 0;
@@ -95,7 +111,7 @@ public class LongTermSimulator2 {
 		//create Forecast tsModel
 		Forecaster forecaster = new Forecaster();
 		forecast = new TimeSeriesModel();
-		
+		int horizon = (int) Math.ceil(Constants.Horizon/dimRed) + offset+window;
 		long startTime = System.currentTimeMillis();
 		
 		for(String key : splittedModel1.getTsModel().keySet()){
@@ -110,10 +126,10 @@ public class LongTermSimulator2 {
 			tsHolder.addDimension("DISK");
 			tsHolder.addDimension("NET");
 			
-			List<Double> cpuForecastListe = forecaster.calculateForecast(cpuSeries, cpuForecast, dimRed,null);
-			List<Double> memForecastListe = forecaster.calculateForecast(memSeries, memForecast, dimRed,null);
-			List<Double> diskForecastListe = forecaster.calculateForecast(diskSeries, diskForecast, dimRed,null);
-			List<Double> netForecastListe = forecaster.calculateForecast(netSeries, netForecast, dimRed,null);
+			List<Double> cpuForecastListe = forecaster.calculateForecast(cpuSeries, cpuForecast, dimRed,horizon);
+			List<Double> memForecastListe = forecaster.calculateForecast(memSeries, memForecast, dimRed,horizon);
+			List<Double> diskForecastListe = forecaster.calculateForecast(diskSeries, diskForecast, dimRed,horizon);
+			List<Double> netForecastListe = forecaster.calculateForecast(netSeries, netForecast, dimRed,horizon);
 
 			tsHolder.AddSeries("CPU", cpuForecastListe);
 			tsHolder.AddSeries("MEM", memForecastListe);
@@ -153,13 +169,22 @@ public class LongTermSimulator2 {
 		System.out.println("Splitlength: " + splitLength);
 		//once we have the initial state, start iterating from i = 0 to splitlength
 		//iterate over values -> let PMs adapt changes -> count overall resource utilisation, num of app relocation, SLO violation
-		
+		List<Double> app1CPUList = new ArrayList<>();
+		List<Double> forecastCPUList = new ArrayList<>();
 		for(int i = 0; i < (Constants.Horizon)-1; i++){
 			
-//			System.out.println("Iteration: "+i);
+			System.out.println("Iteration: "+i);
+			
+			if(this.falsePositiveDimensions > 10000){
+				System.out.println("wtf");
+			}
+			
+			app1CPUList.add(appList.get(2).getActualMEM());
+			forecastCPUList.add(appList.get(2).getForecastedMEMPoint(i+offset));
 			//set Application pointer++ for each application in each machine
 			List<Application> reschedule = new ArrayList<Application>();
 			for(Machine m : pmList){
+				
 				//if ressourceallocationexcption occurs remove app -> assing to reschedule liste
 				//try assign reschedule list to existing PM-s
 				List<Application> appsThatDontFit = m.iterate();
@@ -192,37 +217,38 @@ public class LongTermSimulator2 {
 						realnet += app.getActualNET();
 						realdisk += app.getActualDISK();
 					}
+					
 					sumcpu = Constants.maxCPU - realcpu;
 					summem = Constants.maxMEM - realmem;
 					sumnet = Constants.maxNET - realnet;
 					sumdisk =Constants.maxDISK - realdisk;
-					if(sumcpu <=  0) {
+					if(sumcpu <  0) {
 						CPUViolation = true;
 						CPUDimensionViolated++;
 						dimensionViolations++;
 					}
-					if(summem <=  0){
+					if(summem < 0){
 						MEMViolation = true;
 						MEMDimensionViolated++;
 						dimensionViolations++;
 					}
-					if(sumnet <=  0){
+					if(sumnet <  0){
 						NETViolation = true;
 						NETDimensionViolated++;
 						dimensionViolations++;
 					}
-					if(sumdisk <= 0){
+					if(sumdisk < 0){
 						DISKViolation = true;
 						DISKDimensionViolated++;
 						dimensionViolations++;
 					}
 					if(CPUViolation){
-						Map<String,List<Double>> windowValueMap = m.getForecastWindow(i,window,"CPU",confidenceFactor);
+						Map<String,List<Double>> windowValueMap = m.getForecastWindow(i,window,"CPU",confidenceFactor, appsThatDontFit);
 						List<Double> lowerBound = windowValueMap.get("LOWER");
 						List<Double> upperBound = windowValueMap.get("UPPER");
 						boolean predicted = false;
-						for(Double d : lowerBound){
-							if(d < realcpu) predicted = true;
+						for(Double d : upperBound){
+							if(d > realcpu) predicted = true;
 						}
 						if(predicted){
 							CPUDimensionPredicted++;
@@ -233,12 +259,12 @@ public class LongTermSimulator2 {
 						}
 					}
 					if(DISKViolation){
-						Map<String,List<Double>> windowValueMap = m.getForecastWindow(i,window,"DISK",confidenceFactor);
+						Map<String,List<Double>> windowValueMap = m.getForecastWindow(i,window,"DISK",confidenceFactor, appsThatDontFit);
 						List<Double> lowerBound = windowValueMap.get("LOWER");
 						List<Double> upperBound = windowValueMap.get("UPPER");
 						boolean predicted = false;
-						for(Double d : lowerBound){
-							if(d < realdisk) predicted = true;
+						for(Double d : upperBound){
+							if(d > realdisk) predicted = true;
 						}
 						if(predicted){
 							DISKDimensionPredicted++;
@@ -249,12 +275,12 @@ public class LongTermSimulator2 {
 						}
 					}
 					if(NETViolation){
-						Map<String,List<Double>> windowValueMap = m.getForecastWindow(i,window,"NET",confidenceFactor);
+						Map<String,List<Double>> windowValueMap = m.getForecastWindow(i,window,"NET",confidenceFactor, appsThatDontFit);
 						List<Double> lowerBound = windowValueMap.get("LOWER");
 						List<Double> upperBound = windowValueMap.get("UPPER");
 						boolean predicted = false;
-						for(Double d : lowerBound){
-							if(d < realnet) predicted = true;
+						for(Double d : upperBound){
+							if(d > realnet) predicted = true;
 						}
 						if(predicted){
 							NETDimensionPredicted++;
@@ -265,12 +291,12 @@ public class LongTermSimulator2 {
 						}
 					}
 					if(MEMViolation){
-						Map<String,List<Double>> windowValueMap = m.getForecastWindow(i,window,"MEM",confidenceFactor);
+						Map<String,List<Double>> windowValueMap = m.getForecastWindow(i,window,"MEM",confidenceFactor, appsThatDontFit);
 						List<Double> lowerBound = windowValueMap.get("LOWER");
 						List<Double> upperBound = windowValueMap.get("UPPER");
 						boolean predicted = false;
-						for(Double d : lowerBound){
-							if(d < realmem) predicted = true;
+						for(Double d : upperBound){
+							if(d > realmem) predicted = true;
 						}
 						if(predicted){
 							MEMDimensionPredicted++;
@@ -280,44 +306,42 @@ public class LongTermSimulator2 {
 							missedDimensions++;
 						}
 					}
+					//TODO machinePredicted/Missed
 				}
 				//no rescheduling needed on the machine -> aging of predictions and count false positives
 				if(appsThatDontFit.isEmpty()){
-					double realcpu = Constants.maxCPU - m.getAvailableCPU()*0.5;
-					double realmem = Constants.maxMEM - m.getAvailableMEM()*0.5;
-					double realnet = Constants.maxNET - m.getAvailableNET()*0.5;
-					double realdisk = Constants.maxDISK - m.getAvailableDISK()*0.5;
-//					double realcpu = 0;
-//					double realmem = 0;
-//					double realnet = 0;
-//					double realdisk = 0;
 					
-					Map<String,List<Double>> windowValueMap = m.getForecastWindow(i,window,"CPU",confidenceFactor);
-					List<Double> upperBound = windowValueMap.get("UPPER");
+					double realcpu = Constants.maxCPU;
+					double realmem = Constants.maxMEM;
+					double realnet = Constants.maxNET;
+					double realdisk = Constants.maxDISK;
+					
+					Map<String,List<Double>> windowValueMap = m.getForecastWindow(i,window,"CPU",confidenceFactor,null);
+					List<Double> lowerBound = windowValueMap.get("LOWER");
 					boolean falsePositiveCPU = false;
-					for(Double d : upperBound){
-						if(d < realcpu) falsePositiveCPU = true;
+					for(Double d : lowerBound){
+						if(d > realcpu) falsePositiveCPU = true;
 					}
 					windowValueMap.clear();
-					windowValueMap = m.getForecastWindow(i,window,"MEM",confidenceFactor);
-					upperBound = windowValueMap.get("UPPER");
+					windowValueMap = m.getForecastWindow(i,window,"MEM",confidenceFactor,null);
+					lowerBound = windowValueMap.get("LOWER");
 					boolean falsePositiveMEM = false;
-					for(Double d : upperBound){
-						if(d < realmem) falsePositiveMEM = true;
+					for(Double d : lowerBound){
+						if(d > realmem) falsePositiveMEM = true;
 					}
 					windowValueMap.clear();
-					windowValueMap = m.getForecastWindow(i,window,"DISK",confidenceFactor);
-					upperBound = windowValueMap.get("UPPER");
+					windowValueMap = m.getForecastWindow(i,window,"DISK",confidenceFactor,null);
+					lowerBound = windowValueMap.get("LOWER");
 					boolean falsePositiveDISK = false;
-					for(Double d : upperBound){
-						if(d < realdisk) falsePositiveDISK = true;
+					for(Double d : lowerBound){
+						if(d > realdisk) falsePositiveDISK = true;
 					}
 					windowValueMap.clear();
-					windowValueMap = m.getForecastWindow(i,window,"NET",confidenceFactor);
-					upperBound = windowValueMap.get("UPPER");
+					windowValueMap = m.getForecastWindow(i,window,"NET",confidenceFactor,null);
+					lowerBound = windowValueMap.get("LOWER");
 					boolean falsePositiveNET = false;
-					for(Double d : upperBound){
-						if(d < realnet) falsePositiveNET = true;
+					for(Double d : lowerBound){
+						if(d > realnet) falsePositiveNET = true;
 					}
 					if(falsePositiveCPU){
 						this.falsePositiveCPU++;
@@ -455,12 +479,72 @@ public class LongTermSimulator2 {
 		System.out.println("Per DISK");
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println("Violated \t Predicted \t Missed \t FalsePositive");
-		System.out.println("" + DISKDimensionViolated +" \t\t " + DISKDimensionPredicted  +" \t\t " + DISKDimensionMissed +" \t\t " + falsePositiveNET);
+		System.out.println("" + DISKDimensionViolated +" \t\t " + DISKDimensionPredicted  +" \t\t " + DISKDimensionMissed +" \t\t " + falsePositiveDISK);
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println();
 		
+		XYSeries s1 = new XYSeries("RealCPU");
+		XYSeries s2 = new XYSeries("Forecast");
+		int i=0;
+		for(Double value : app1CPUList){
+			s1.add(i,value);
+			s2.add(i,forecastCPUList.get(i));
+			i++;
+		}
+		XYSeriesCollection dataset = new XYSeriesCollection();
+		dataset.addSeries(s1);
+		dataset.addSeries(s2);
+
+		JFreeChart chart = createChart(dataset, "firstmachine");
+		chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.RED);
+		chart.getXYPlot().getRenderer().setSeriesPaint(1, Color.BLUE);
+		ChartPanel panel = new ChartPanel(chart);
+		
+		JFrame frame = new JFrame();
+		frame.setSize(400, 300);
+		frame.setContentPane(panel);
+		frame.setVisible(true);
+	
+		
 		
 	}
+	
+	
+	private JFreeChart createChart(XYDataset dataset,String dim) {
+
+		JFreeChart chart = ChartFactory.createXYLineChart(
+				dim,  // title
+				"Time",             // x-axis label
+				"Usage",   // y-axis label
+				dataset,            // data
+				PlotOrientation.VERTICAL,
+				false,               // create legend?
+				false,               // generate tooltips?
+				false               // generate URLs?
+				);
+
+		chart.setBackgroundPaint(Color.white);
+		XYPlot plot = (XYPlot) chart.getPlot();
+		plot.setBackgroundPaint(Color.white);
+		plot.setDomainGridlinePaint(Color.lightGray);
+		plot.setRangeGridlinePaint(Color.lightGray);
+		plot.setAxisOffset(new RectangleInsets(2.0, 2.0, 2.0, 2.0));
+		plot.setDomainCrosshairVisible(true);
+		plot.setRangeCrosshairVisible(true);
+
+		XYItemRenderer r = plot.getRenderer();
+		if (r instanceof XYLineAndShapeRenderer) {
+			XYLineAndShapeRenderer renderer = (XYLineAndShapeRenderer) r;
+			renderer.setBaseShapesVisible(false);
+			renderer.setBaseShapesFilled(true);
+			renderer.setDrawSeriesLineAsPath(true);
+			
+		}
+		return chart;
+
+	}
+		
+	
 	
 	private double calculateUtilization(){
 		double numPm = (double) pmList.size();

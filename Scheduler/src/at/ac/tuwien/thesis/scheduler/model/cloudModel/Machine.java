@@ -260,15 +260,17 @@ public class Machine {
 		return "Machine [id=" + id + "]";
 	}
 
-	public Map<String,List<Double>> getForecastWindow(int i, Integer window, String string, double confidence) {
+	public Map<String,List<Double>> getForecastWindow(int i, Integer window, String string, double confidence,List<Application> additionalApps) {
 		List<Double> lowerBound = new ArrayList<Double>();
 		List<Double> upperBound = new ArrayList<Double>();
+		List<Application> apps = new ArrayList<Application>(appListe);
+		if(additionalApps != null ) apps.addAll(additionalApps);
 		if(string.equals("CPU")){
 			for(int j = 0; j<window;j++){
 				double sumLower = 0;
 				double sumUpper = 0;
-				for(Application app : appListe){
-					double temp  = app.getForecastedCPU(i+j);
+				for(Application app : apps){
+					double temp  = app.getForecastedCPUPoint(i+j);
 					if(temp < 0) temp = 0;
 					sumLower += temp * confidence;
 					sumUpper += temp * (1+(1 - confidence));
@@ -280,8 +282,8 @@ public class Machine {
 			for(int j = 0; j<window;j++){
 				double sumLower = 0;
 				double sumUpper = 0;
-				for(Application app : appListe){
-					double temp  = app.getForecastedMEM(i+j);
+				for(Application app : apps){
+					double temp  = app.getForecastedMEMPoint(i+j);
 					if(temp < 0) temp = 0;
 					sumLower += temp * confidence;
 					sumUpper += temp * (1+(1 - confidence));
@@ -294,8 +296,8 @@ public class Machine {
 			for(int j = 0; j<window;j++){
 				double sumLower = 0;
 				double sumUpper = 0;
-				for(Application app : appListe){
-					double temp  = app.getForecastedNET(i+j);
+				for(Application app : apps){
+					double temp  = app.getForecastedNETPoint(i+j);
 					if(temp < 0) temp = 0;
 					sumLower += temp * confidence;
 					sumUpper += temp * (1+(1 - confidence));
@@ -307,8 +309,8 @@ public class Machine {
 			for(int j = 0; j<window;j++){
 				double sumLower = 0;
 				double sumUpper = 0;
-				for(Application app : appListe){
-					double temp  = app.getForecastedDISK(i+j);
+				for(Application app : apps){
+					double temp  = app.getForecastedDISKPoint(i+j);
 					if(temp < 0) temp = 0;
 					sumLower += temp * confidence;
 					sumUpper += temp * (1+(1 - confidence));
@@ -324,6 +326,8 @@ public class Machine {
 		return returnMap;
 	}
 	
-	
+	public int getID(){
+		return this.id;
+	}
 	
 }

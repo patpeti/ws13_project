@@ -74,8 +74,10 @@ public class SimulationPanel {
 		right.add(comboBox);
 		comboBox.setModel(new DefaultComboBoxModel(SimType.values()));
 		
+		comboBox.setSelectedIndex(3);
+		
 		spinner2 = new JSpinner();
-		spinner2.setValue(new Integer(50));
+		spinner2.setValue(new Integer(Constants.defaultSplit));
 		right.add(spinner2);
 		
 		comboBox_dimred = new JComboBox();

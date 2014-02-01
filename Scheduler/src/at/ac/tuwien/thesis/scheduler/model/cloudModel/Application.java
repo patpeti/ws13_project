@@ -111,6 +111,20 @@ public class Application {
 	}
 	
 	
+	public double getForecastedMEMPoint(int index) {
+			return this.forecastedMemList.get(index);
+	}
+	
+	public double getForecastedCPUPoint(int index) {
+		return this.forecastedCpuList.get(index);
+	}
+	public double getForecastedDISKPoint(int index) {
+		return this.forecastedDiskList.get(index);
+	}
+	public double getForecastedNETPoint(int index) {
+		return this.forecastedNetList.get(index);
+	}
+	
 	public List<Double> getForecastedResourceWindow(int pointer,int windowsize,String resType){
 		List<Double> returnList = new ArrayList<Double>();
 		for(int i = 0; i < windowsize; i++){

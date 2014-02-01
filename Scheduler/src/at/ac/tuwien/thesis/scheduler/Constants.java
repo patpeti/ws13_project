@@ -4,7 +4,8 @@ public class Constants {
 
 	public static  Integer DataPerDay = 1440;
 	public static  Integer DataPerWeek = DataPerDay*7;
-	public static  Integer Horizon = DataPerWeek;
+	public static  Integer Horizon = 1440;
+	public static Integer defaultSplit = 2880;
 	
 //	public static final Integer maxCPU = 90*3;
 //	public static final Integer maxNET = 7000*3;
