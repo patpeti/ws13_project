@@ -4,6 +4,7 @@ import at.ac.tuwien.thesis.scheduler.enums.ForecastType;
 import at.ac.tuwien.thesis.scheduler.enums.SimType;
 import at.ac.tuwien.thesis.scheduler.model.TimeSeriesModel;
 import at.ac.tuwien.thesis.scheduler.utils.simulators.LongTermSimulator;
+import at.ac.tuwien.thesis.scheduler.utils.simulators.LongTermSimulator2;
 import at.ac.tuwien.thesis.scheduler.utils.simulators.NaiveSimulator;
 import at.ac.tuwien.thesis.scheduler.utils.simulators.ShortTermSimulator;
 
@@ -32,6 +33,12 @@ public class Simulator {
 			longterm.setForecastTypes(cpuForecast,netForecast,memForecast,diskForecast);
 			longterm.simulate(confidence,split,dimRed);
 			
+		}else if(type.equals(SimType.LONGTERM2)){
+
+				LongTermSimulator2 longterm = new LongTermSimulator2(tsModel);
+				longterm.setForecastTypes(cpuForecast,netForecast,memForecast,diskForecast);
+				longterm.simulate(confidence,split,dimRed);
+				
 		}else if(type.equals(SimType.SHORTTERM)){
 
 			ShortTermSimulator shortTerm = new ShortTermSimulator(tsModel);

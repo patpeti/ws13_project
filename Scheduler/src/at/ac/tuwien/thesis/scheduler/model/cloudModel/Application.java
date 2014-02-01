@@ -1,5 +1,6 @@
 package at.ac.tuwien.thesis.scheduler.model.cloudModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Application {
@@ -108,4 +109,22 @@ public class Application {
 			return this.forecastedNetList.get(this.pointer);
 		}
 	}
+	
+	
+	public List<Double> getForecastedResourceWindow(int pointer,int windowsize,String resType){
+		List<Double> returnList = new ArrayList<Double>();
+		for(int i = 0; i < windowsize; i++){
+			if(resType.equals("CPU")){
+				returnList.add(this.forecastedCpuList.get(pointer+i));
+			}else if(resType.equals("DISK")){
+				returnList.add(this.forecastedDiskList.get(pointer+i));
+			}else if(resType.equals("MEM")){
+				returnList.add(this.forecastedMemList.get(pointer+i));
+			}else if(resType.equals("NET")){
+				returnList.add(this.forecastedNetList.get(pointer+i));
+			}
+		}
+		return returnList;
+	}
+	
 }

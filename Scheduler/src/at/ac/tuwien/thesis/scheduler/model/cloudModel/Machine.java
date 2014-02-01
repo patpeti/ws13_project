@@ -1,7 +1,9 @@
 package at.ac.tuwien.thesis.scheduler.model.cloudModel;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import at.ac.tuwien.thesis.scheduler.Constants;
 
@@ -256,6 +258,70 @@ public class Machine {
 	@Override
 	public String toString() {
 		return "Machine [id=" + id + "]";
+	}
+
+	public Map<String,List<Double>> getForecastWindow(int i, Integer window, String string, double confidence) {
+		List<Double> lowerBound = new ArrayList<Double>();
+		List<Double> upperBound = new ArrayList<Double>();
+		if(string.equals("CPU")){
+			for(int j = 0; j<window;j++){
+				double sumLower = 0;
+				double sumUpper = 0;
+				for(Application app : appListe){
+					double temp  = app.getForecastedCPU(i+j);
+					if(temp < 0) temp = 0;
+					sumLower += temp * confidence;
+					sumUpper += temp * (1+(1 - confidence));
+				}
+				lowerBound.add(sumLower);
+				upperBound.add(sumUpper);
+			}
+		}else if(string.equals("MEM")){
+			for(int j = 0; j<window;j++){
+				double sumLower = 0;
+				double sumUpper = 0;
+				for(Application app : appListe){
+					double temp  = app.getForecastedMEM(i+j);
+					if(temp < 0) temp = 0;
+					sumLower += temp * confidence;
+					sumUpper += temp * (1+(1 - confidence));
+				}
+				lowerBound.add(sumLower);
+				upperBound.add(sumUpper);
+			}
+			
+		}else if(string.equals("NET")){
+			for(int j = 0; j<window;j++){
+				double sumLower = 0;
+				double sumUpper = 0;
+				for(Application app : appListe){
+					double temp  = app.getForecastedNET(i+j);
+					if(temp < 0) temp = 0;
+					sumLower += temp * confidence;
+					sumUpper += temp * (1+(1 - confidence));
+				}
+				lowerBound.add(sumLower);
+				upperBound.add(sumUpper);
+			}
+		}else if(string.equals("DISK")){
+			for(int j = 0; j<window;j++){
+				double sumLower = 0;
+				double sumUpper = 0;
+				for(Application app : appListe){
+					double temp  = app.getForecastedDISK(i+j);
+					if(temp < 0) temp = 0;
+					sumLower += temp * confidence;
+					sumUpper += temp * (1+(1 - confidence));
+				}
+				lowerBound.add(sumLower);
+				upperBound.add(sumUpper);
+			}
+		}
+		
+		Map<String,List<Double>> returnMap = new HashMap<String,List<Double>>();
+		returnMap.put("LOWER", lowerBound);
+		returnMap.put("UPPER", upperBound);
+		return returnMap;
 	}
 	
 	

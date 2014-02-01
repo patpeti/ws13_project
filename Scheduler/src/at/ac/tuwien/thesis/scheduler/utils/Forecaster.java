@@ -23,7 +23,7 @@ public class Forecaster {
 		
 		if(horizon == null){
 			horizon = Constants.Horizon;
-			horizon = (int) Math.ceil(Constants.Horizon/dr_factor);
+			horizon = (int) Math.ceil(Constants.Horizon/dr_factor+25);
 		}
 		
 		if(forecastType.equals(ForecastType.NAIVE)){

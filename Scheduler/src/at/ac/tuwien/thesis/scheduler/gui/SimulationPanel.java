@@ -152,7 +152,9 @@ public class SimulationPanel {
 			return SimType.SHORTTERM;
 		}else if(comboBox.getSelectedItem().equals(SimType.LONGTERM)){
 			return SimType.LONGTERM;
-		}
+		}else if(comboBox.getSelectedItem().equals(SimType.LONGTERM2)){
+				return SimType.LONGTERM2;
+			}
 		return null;
 	}
 	
