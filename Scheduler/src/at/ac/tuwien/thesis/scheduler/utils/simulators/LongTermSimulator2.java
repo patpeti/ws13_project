@@ -45,7 +45,7 @@ public class LongTermSimulator2 {
 	int splitLength;
 	int dataLength;
 	
-	public final static Integer offset = 50;
+	public final static Integer offset = 0;
 	public final static Integer window = 20;
 	
 	List<Double> utilisationLog;
@@ -169,18 +169,10 @@ public class LongTermSimulator2 {
 		System.out.println("Splitlength: " + splitLength);
 		//once we have the initial state, start iterating from i = 0 to splitlength
 		//iterate over values -> let PMs adapt changes -> count overall resource utilisation, num of app relocation, SLO violation
-		List<Double> app1CPUList = new ArrayList<>();
-		List<Double> forecastCPUList = new ArrayList<>();
 		for(int i = 0; i < (Constants.Horizon)-1; i++){
 			
-			System.out.println("Iteration: "+i);
+//			System.out.println("Iteration: "+i);
 			
-			if(this.falsePositiveDimensions > 10000){
-				System.out.println("wtf");
-			}
-			
-			app1CPUList.add(appList.get(2).getActualMEM());
-			forecastCPUList.add(appList.get(2).getForecastedMEMPoint(i+offset));
 			//set Application pointer++ for each application in each machine
 			List<Application> reschedule = new ArrayList<Application>();
 			for(Machine m : pmList){
@@ -483,27 +475,27 @@ public class LongTermSimulator2 {
 		System.out.println("-------------------------------------------------------------------------------------------------------");
 		System.out.println();
 		
-		XYSeries s1 = new XYSeries("RealCPU");
-		XYSeries s2 = new XYSeries("Forecast");
-		int i=0;
-		for(Double value : app1CPUList){
-			s1.add(i,value);
-			s2.add(i,forecastCPUList.get(i));
-			i++;
-		}
-		XYSeriesCollection dataset = new XYSeriesCollection();
-		dataset.addSeries(s1);
-		dataset.addSeries(s2);
-
-		JFreeChart chart = createChart(dataset, "firstmachine");
-		chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.RED);
-		chart.getXYPlot().getRenderer().setSeriesPaint(1, Color.BLUE);
-		ChartPanel panel = new ChartPanel(chart);
-		
-		JFrame frame = new JFrame();
-		frame.setSize(400, 300);
-		frame.setContentPane(panel);
-		frame.setVisible(true);
+//		XYSeries s1 = new XYSeries("RealCPU");
+//		XYSeries s2 = new XYSeries("Forecast");
+//		int i=0;
+//		for(Double value : app1CPUList){
+//			s1.add(i,value);
+//			s2.add(i,forecastCPUList.get(i));
+//			i++;
+//		}
+//		XYSeriesCollection dataset = new XYSeriesCollection();
+//		dataset.addSeries(s1);
+//		dataset.addSeries(s2);
+//
+//		JFreeChart chart = createChart(dataset, "firstmachine");
+//		chart.getXYPlot().getRenderer().setSeriesPaint(0, Color.RED);
+//		chart.getXYPlot().getRenderer().setSeriesPaint(1, Color.BLUE);
+//		ChartPanel panel = new ChartPanel(chart);
+//		
+//		JFrame frame = new JFrame();
+//		frame.setSize(400, 300);
+//		frame.setContentPane(panel);
+//		frame.setVisible(true);
 	
 		
 		
