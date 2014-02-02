@@ -51,7 +51,8 @@ public class LongTermSimulator2 implements Serializable{
 	int dataLength;
 	
 	public final static Integer offset = 0;
-	public final static Integer window = 20;
+	public final static Integer window = 50;
+	private boolean dynamicAdjustment = true;
 	
 	List<Double> utilisationLog;
 	List<Integer> numPMLog;
@@ -469,6 +470,18 @@ public class LongTermSimulator2 implements Serializable{
 				System.out.println("First step ... Do nothing");
 			}
 			numPMLog.add(pmList.size());
+
+			if(dynamicAdjustment ){
+				if(((i+1) % window) == 0){
+					int windowIndex = (int) ((i+1) / window);
+					for(Machine m: pmList){
+						for(Application a: m.getApps()){
+							a.calculateAdjustmentVar(window,windowIndex);
+						}
+					}
+				}
+			}
+			
 		}
 
 		System.out.println("Number of reschedules: " + numReschedules);
@@ -711,25 +724,7 @@ public class LongTermSimulator2 implements Serializable{
 		this.diskForecast = diskForecast;
 	}
 	
-	private Double calculateMean(List<Double> temp) {
-		Double sum = new Double(0);
-		int num = 0;
-		for(Double d : temp){
-			sum += d;
-			num++;
-		}
-		return (new Double(sum) / new Double(num));
-	}
 	
-	private Double calculateMean2(List<Integer> temp) {
-		Double sum = new Double(0);
-		int num = 0;
-		for(Integer d : temp){
-			sum += d;
-			num++;
-		}
-		return (new Double(sum) / new Double(num));
-	}
 
 
 }

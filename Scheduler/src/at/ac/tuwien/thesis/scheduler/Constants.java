@@ -9,8 +9,12 @@ public class Constants {
 	
 	public static final Integer maxCPU = 90*3;
 	public static final Integer maxNET = 7000*3;
-	public static final Integer maxMEM = 25*4;
-	public static final Integer maxDISK = 4*4;
+//	public static final Integer maxMEM = 25*4;
+	public static final Integer maxMEM = 90*6;
+//	public static final Integer maxDISK = 4*4;
+	public static final Integer maxDISK = 50;
+	
+	
 //	public static final Integer maxCPU = 90*2;
 //	public static final Integer maxNET = 7000*2;
 //	public static final Integer maxMEM = 100;

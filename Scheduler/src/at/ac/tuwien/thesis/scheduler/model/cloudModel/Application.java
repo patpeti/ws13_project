@@ -3,6 +3,8 @@ package at.ac.tuwien.thesis.scheduler.model.cloudModel;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.ac.tuwien.thesis.scheduler.utils.MathUtil;
+
 public class Application {
 	
 	String name;
@@ -15,6 +17,8 @@ public class Application {
 	List<Double> forecastedDiskList;
 	List<Double> forecastedNetList;
 	int pointer = 0;
+	double netadjustment = 0;
+	double cpuadjustment = 0;
 
 	
 	public Application(List<Double> cpuSeries,
@@ -130,13 +134,13 @@ public class Application {
 	}
 	
 	public double getForecastedCPUPoint(int index) {
-		return this.forecastedCpuList.get(index);
+		return this.forecastedCpuList.get(index)+cpuadjustment;
 	}
 	public double getForecastedDISKPoint(int index) {
 		return this.forecastedDiskList.get(index);
 	}
 	public double getForecastedNETPoint(int index) {
-		return this.forecastedNetList.get(index);
+		return this.forecastedNetList.get(index)+netadjustment;
 	}
 	
 	public List<Double> getForecastedResourceWindow(int pointer,int windowsize,String resType){
@@ -153,6 +157,26 @@ public class Application {
 			}
 		}
 		return returnList;
+	}
+
+	public void calculateAdjustmentVar(Integer window, int windowIndex) {
+		List<Double> actualCPU = new ArrayList<Double>();
+		List<Double> actualNET = new ArrayList<Double>();
+		List<Double> forecastedCPU = new ArrayList<Double>();
+		List<Double> forecastedNET = new ArrayList<Double>();
+		for(int i = 0; i < window*windowIndex;i++ ){
+			actualCPU.add(this.getCPUPoint(i));
+			actualNET.add(this.getCPUPoint(i));
+			forecastedCPU.add(this.getForecastedCPUPoint(i));
+			forecastedNET.add(this.getForecastedNETPoint(i));
+		}
+		Double meanAcualCPU = MathUtil.calculateMean(actualCPU);
+		Double meanAcualNET = MathUtil.calculateMean(actualCPU);
+		Double forecastedCPUMean = MathUtil.calculateMean(forecastedCPU);
+		Double forecastedNETMean = MathUtil.calculateMean(forecastedNET);
+		
+		this.cpuadjustment = this.cpuadjustment + (meanAcualCPU - forecastedCPUMean);
+		this.netadjustment = 0;
 	}
 	
 }
