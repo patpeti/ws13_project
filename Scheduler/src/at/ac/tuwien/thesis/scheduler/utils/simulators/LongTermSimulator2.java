@@ -1,23 +1,25 @@
 package at.ac.tuwien.thesis.scheduler.utils.simulators;
 
 import java.awt.Color;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JFrame;
-
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataset;
-import org.jfree.data.xy.XYSeries;
-import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.RectangleInsets;
 
 import at.ac.tuwien.thesis.scheduler.Constants;
@@ -28,10 +30,13 @@ import at.ac.tuwien.thesis.scheduler.model.cloudModel.Application;
 import at.ac.tuwien.thesis.scheduler.model.cloudModel.Machine;
 import at.ac.tuwien.thesis.scheduler.model.cloudModel.ResourceAllocationException;
 import at.ac.tuwien.thesis.scheduler.utils.Forecaster;
-import at.ac.tuwien.thesis.scheduler.utils.Prediction;
 
-public class LongTermSimulator2 {
+public class LongTermSimulator2 implements Serializable{
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6101956713496978337L;
 	private ForecastType diskForecast;
 	private ForecastType netForecast;
 	private ForecastType memForecast;
@@ -112,32 +117,66 @@ public class LongTermSimulator2 {
 		Forecaster forecaster = new Forecaster();
 		forecast = new TimeSeriesModel();
 		int horizon = (int) Math.ceil(Constants.Horizon/dimRed) + offset+window;
-		long startTime = System.currentTimeMillis();
 		
-		for(String key : splittedModel1.getTsModel().keySet()){
-			List<Double> cpuSeries = splittedModel1.getTsForName(key).getDimension("CPU");
-			List<Double> memSeries = splittedModel1.getTsForName(key).getDimension("MEM");
-			List<Double> diskSeries = splittedModel1.getTsForName(key).getDimension("DISK");
-			List<Double> netSeries = splittedModel1.getTsForName(key).getDimension("NET");
+		String name = ""+cpuForecast.toString()+memForecast.toString()+diskForecast.toString()+netForecast.toString();
+		String path = Constants.path + "/forecasts/"+name;
+		File input = new File(path);
+		if(input.exists()){
+			try {
+				FileInputStream fis = new FileInputStream(input);
+				ObjectInputStream ois = new ObjectInputStream(fis);
+				
+				forecast = (TimeSeriesModel) ois.readObject();
+				ois.close();
+				
+			} catch (IOException | ClassNotFoundException e) {
+				e.printStackTrace();
+			}
 			
-			TimeSeriesHolder tsHolder = new TimeSeriesHolder();
-			tsHolder.addDimension("CPU");
-			tsHolder.addDimension("MEM");
-			tsHolder.addDimension("DISK");
-			tsHolder.addDimension("NET");
-			
-			List<Double> cpuForecastListe = forecaster.calculateForecast(cpuSeries, cpuForecast, dimRed,horizon);
-			List<Double> memForecastListe = forecaster.calculateForecast(memSeries, memForecast, dimRed,horizon);
-			List<Double> diskForecastListe = forecaster.calculateForecast(diskSeries, diskForecast, dimRed,horizon);
-			List<Double> netForecastListe = forecaster.calculateForecast(netSeries, netForecast, dimRed,horizon);
-
-			tsHolder.AddSeries("CPU", cpuForecastListe);
-			tsHolder.AddSeries("MEM", memForecastListe);
-			tsHolder.AddSeries("DISK", diskForecastListe);
-			tsHolder.AddSeries("NET", netForecastListe);
-			
-			forecast.addNewTimeSeries(key, tsHolder);
 		}
+		
+		long startTime = System.currentTimeMillis();
+		if(!input.exists()){
+			for(String key : splittedModel1.getTsModel().keySet()){
+				List<Double> cpuSeries = splittedModel1.getTsForName(key).getDimension("CPU");
+				List<Double> memSeries = splittedModel1.getTsForName(key).getDimension("MEM");
+				List<Double> diskSeries = splittedModel1.getTsForName(key).getDimension("DISK");
+				List<Double> netSeries = splittedModel1.getTsForName(key).getDimension("NET");
+
+				TimeSeriesHolder tsHolder = new TimeSeriesHolder();
+				tsHolder.addDimension("CPU");
+				tsHolder.addDimension("MEM");
+				tsHolder.addDimension("DISK");
+				tsHolder.addDimension("NET");
+
+				List<Double> cpuForecastListe = forecaster.calculateForecast(cpuSeries, cpuForecast, dimRed,horizon);
+				List<Double> memForecastListe = forecaster.calculateForecast(memSeries, memForecast, dimRed,horizon);
+				List<Double> diskForecastListe = forecaster.calculateForecast(diskSeries, diskForecast, dimRed,horizon);
+				List<Double> netForecastListe = forecaster.calculateForecast(netSeries, netForecast, dimRed,horizon);
+
+				tsHolder.AddSeries("CPU", cpuForecastListe);
+				tsHolder.AddSeries("MEM", memForecastListe);
+				tsHolder.AddSeries("DISK", diskForecastListe);
+				tsHolder.AddSeries("NET", netForecastListe);
+
+				forecast.addNewTimeSeries(key, tsHolder);
+			}
+
+
+			FileOutputStream fos;
+			try {
+				File file = new File(path);
+				file.createNewFile();
+				fos = new FileOutputStream(file);
+				ObjectOutputStream os = new ObjectOutputStream(fos);
+				os.writeObject(forecast);
+				os.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
 		forecastTime = System.currentTimeMillis() - startTime;
 		
 		
@@ -172,6 +211,10 @@ public class LongTermSimulator2 {
 		for(int i = 0; i < (Constants.Horizon)-1; i++){
 			
 //			System.out.println("Iteration: "+i);
+			//feedback loop
+			if(i>window){
+				
+			}
 			
 			//set Application pointer++ for each application in each machine
 			List<Application> reschedule = new ArrayList<Application>();

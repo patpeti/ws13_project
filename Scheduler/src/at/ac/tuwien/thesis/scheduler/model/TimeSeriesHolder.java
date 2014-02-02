@@ -1,12 +1,17 @@
 package at.ac.tuwien.thesis.scheduler.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TimeSeriesHolder {
+public class TimeSeriesHolder implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8938941879625456580L;
 	Map<String,List<Double>> ts;
 	
 	public TimeSeriesHolder(){

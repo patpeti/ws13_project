@@ -56,7 +56,7 @@ public class Application {
 		return name;
 	}
 	public String toString(){
-		return name + "C/M/N/D    /" + getActualCPU()+ "/" + getActualMEM()+ "/" + getActualNET()+ "/" + getActualDISK();
+		return name + " C/M/N/D - " + getActualCPU()+ "/" + getActualMEM()+ "/" + getActualNET()+ "/" + getActualDISK();
 	}
 	public int size(){
 		return this.cpuList.size();
@@ -78,6 +78,20 @@ public class Application {
 	public void setForecastedNET(List<Double> dimension) {
 		this.forecastedNetList = dimension;
 		
+	}
+	
+	public Double getCPUPoint(int index){
+		return this.cpuList.get(index);
+	}
+	
+	public Double getMEMPoint(int index){
+		return this.memList.get(index);
+	}
+	public Double getDISKPoint(int index){
+		return this.diskList.get(index);
+	}
+	public Double getNETPoint(int index){
+		return this.netList.get(index);
 	}
 
 	public double getForecastedMEM(int step) {

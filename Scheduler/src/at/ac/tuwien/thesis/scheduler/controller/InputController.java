@@ -10,6 +10,7 @@ import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import at.ac.tuwien.thesis.scheduler.Constants;
 import at.ac.tuwien.thesis.scheduler.MainWindow;
 import at.ac.tuwien.thesis.scheduler.model.ListModel;
 import at.ac.tuwien.thesis.scheduler.model.TableModel;
@@ -53,6 +54,7 @@ public class InputController extends JFrame implements ActionListener, ListSelec
 //		      System.out.println("getSelectedFile() : "     +  chooser.getSelectedFile());
 		      //1.Read File In
 		      // TimeSeriesMOdel <- CsvReader.readAll(dir)
+		      Constants.path = chooser.getSelectedFile().getPath();
 		      tsModel = new CSVReader().readCSVs(chooser.getSelectedFile());
 		      settingsController.setData(tsModel);
 		      simController.setData(tsModel);

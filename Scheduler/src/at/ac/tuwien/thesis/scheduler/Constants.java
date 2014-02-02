@@ -22,4 +22,6 @@ public class Constants {
 	public static final Integer vmDISK = 0;
 	public static int machineId = 0;
 	
+	public static String path;
+	
 }
